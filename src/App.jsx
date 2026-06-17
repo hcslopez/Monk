@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import {
   Play, Pause, RotateCcw, SkipForward, Flame, Sparkles, Settings as SettingsIcon,
@@ -27,8 +26,14 @@ const TRIAL_DAYS = 3;
 
 const mem = {};
 const store = {
-  async get(k) { try { if (window?.storage?.get) { const r = await window.storage.get(k); return r?.value ?? null; } } catch (_) {} return k in mem ? mem[k] : null; },
-  async set(k, v) { try { if (window?.storage?.set) { await window.storage.set(k, v); return; } } catch (_) {} mem[k] = v; },
+  async get(k) {
+    try { const v = localStorage.getItem(k); if (v !== null) return v; } catch (_) {}
+    return k in mem ? mem[k] : null;
+  },
+  async set(k, v) {
+    try { localStorage.setItem(k, v); return; } catch (_) {}
+    mem[k] = v;
+  },
 };
 
 const pad = (n) => String(n).padStart(2, "0");
@@ -198,7 +203,7 @@ function AuthScreen({ accounts, onSignUp, onLogIn, onReset }) {
       <div style={S.authCard} className="flow-fade">
         <div style={S.authBrand}>
           <span style={S.brandDotLg} />
-          <span style={{ fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em" }}>Flow</span>
+          <span style={{ fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em" }}>Monk</span>
         </div>
         <div style={S.authTitle}>
           {view === "login" ? "Welcome back" : view === "signup" ? "Create your account" : "Reset your password"}
@@ -364,12 +369,7 @@ function TitleBar({ email, proState, saveState, onUpgrade, onSettings, menuOpen,
   const initial = email.charAt(0).toUpperCase();
   return (
     <div style={S.titleBar}>
-      <div style={S.lights}>
-        <span style={{ ...S.light, background: "#FF5F57" }} />
-        <span style={{ ...S.light, background: "#FEBC2E" }} />
-        <span style={{ ...S.light, background: "#28C840" }} />
-      </div>
-      <div style={S.brand}><span style={S.brandDot} />Flow</div>
+      <div style={S.brand}><span style={S.brandDot} />Monk</div>
 
       <div style={S.titleRight}>
         {proState.isPro ? (
@@ -379,7 +379,7 @@ function TitleBar({ email, proState, saveState, onUpgrade, onSettings, menuOpen,
           </div>
         ) : (
           <button className="flow-press flow-focus" style={S.unlockBtn} onClick={onUpgrade}>
-            <Crown size={13} color={C.bg} /> Unlock Flow Pro
+            <Crown size={13} color={C.bg} /> Unlock Monk Pro
           </button>
         )}
 
@@ -447,9 +447,9 @@ function StatsPanel({ history, range, offset, isPro, onUpgrade }) {
           <div style={S.lockBadge}><Lock size={18} color={C.accent} /></div>
           <div style={{ fontWeight: 650, color: C.textHi, fontSize: 14 }}>Your stats, unlocked with Pro</div>
           <div style={{ color: C.textMid, fontSize: 12.5, marginTop: 4, lineHeight: 1.5, padding: "0 10px" }}>
-            Weekly focus, averages, streaks and lifetime totals are part of Flow Pro.
+            Weekly focus, averages, streaks and lifetime totals are part of Monk Pro.
           </div>
-          <button className="flow-press flow-focus" style={S.lockBtn} onClick={onUpgrade}><Crown size={13} color={C.bg} /> Unlock Flow Pro</button>
+          <button className="flow-press flow-focus" style={S.lockBtn} onClick={onUpgrade}><Crown size={13} color={C.bg} /> Unlock Monk Pro</button>
         </div>
       )}
     </aside>
@@ -513,7 +513,7 @@ function ChartPanel({ history, range, setRange, offset, setOffset, isPro, onUpgr
               {range === "month" ? "Monthly" : "Yearly"} view is a Pro feature
             </div>
             <div style={{ color: C.textMid, fontSize: 13, marginTop: 5 }}>Day and Week are free. Unlock the long view with Pro.</div>
-            <button className="flow-press flow-focus" style={{ ...S.lockBtn, marginTop: 16 }} onClick={onUpgrade}><Crown size={13} color={C.bg} /> Unlock Flow Pro</button>
+            <button className="flow-press flow-focus" style={{ ...S.lockBtn, marginTop: 16 }} onClick={onUpgrade}><Crown size={13} color={C.bg} /> Unlock Monk Pro</button>
           </div>
         ) : data.hasData ? (
           <ResponsiveContainer width="100%" height="100%">
@@ -691,7 +691,7 @@ function UpgradeModal({ proState, onClose, onStartTrial, onBuyLifetime }) {
     <div style={S.overlay} className="flow-fade" onClick={onClose}>
       <div style={S.modal} onClick={(e) => e.stopPropagation()}>
         <div style={S.modalHead}>
-          <span style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 680, fontSize: 16 }}><Crown size={17} color={C.gold} /> Flow Pro</span>
+          <span style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 680, fontSize: 16 }}><Crown size={17} color={C.gold} /> Monk Pro</span>
           <button className="flow-press flow-focus" style={S.closeBtn} onClick={onClose} aria-label="Close"><X size={16} color={C.textMid} /></button>
         </div>
 
@@ -955,12 +955,12 @@ const S = {
   demoNote: { fontSize: 11.5, color: C.textLo, lineHeight: 1.5, marginTop: 12, background: C.surface, border: `1px dashed ${C.lineStrong}`, borderRadius: 10, padding: "9px 11px" },
 
   /* window */
-  root: { minHeight: "100vh", width: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: "linear-gradient(140deg, #060A08 0%, #0A1310 100%)", padding: 22, boxSizing: "border-box" },
-  window: { width: "100%", maxWidth: 1080, height: "min(680px, 92vh)", minHeight: 520, display: "flex", flexDirection: "column", background: C.win, border: `1px solid ${C.lineStrong}`, borderRadius: 16, overflow: "hidden", boxShadow: "0 40px 120px rgba(0,0,0,0.6)" },
-  titleBar: { height: 48, display: "flex", alignItems: "center", padding: "0 14px", borderBottom: `1px solid ${C.line}`, background: "rgba(255,255,255,0.015)", gap: 14, flexShrink: 0 },
+  root: { minHeight: "100vh", width: "100%", display: "flex", background: C.bg, boxSizing: "border-box" },
+  window: { width: "100%", height: "100vh", display: "flex", flexDirection: "column", background: C.win, overflow: "hidden" },
+  titleBar: { height: 52, display: "flex", alignItems: "center", padding: "0 20px", borderBottom: `1px solid ${C.line}`, background: "rgba(255,255,255,0.015)", gap: 14, flexShrink: 0 },
   lights: { display: "flex", gap: 8 },
   light: { width: 12, height: 12, borderRadius: "50%" },
-  brand: { display: "flex", alignItems: "center", gap: 7, fontSize: 13.5, fontWeight: 650, letterSpacing: "-0.01em" },
+  brand: { display: "flex", alignItems: "center", gap: 8, fontSize: 15, fontWeight: 680, letterSpacing: "-0.01em" },
   brandDot: { width: 8, height: 8, borderRadius: "50%", background: C.accent, boxShadow: `0 0 8px ${C.accentGlow}` },
   titleRight: { marginLeft: "auto", display: "flex", alignItems: "center", gap: 9 },
   unlockBtn: { display: "flex", alignItems: "center", gap: 6, background: C.accent, color: C.bg, border: "none", borderRadius: 999, padding: "7px 14px", fontSize: 12.5, fontWeight: 680, cursor: "pointer", fontFamily: FONT },
@@ -979,7 +979,7 @@ const S = {
 
   loading: { flex: 1, display: "flex", alignItems: "center", justifyContent: "center" },
   spinner: { width: 28, height: 28, border: `2.5px solid ${C.elevated}`, borderTopColor: C.accent, borderRadius: "50%" },
-  body: { flex: 1, display: "grid", gridTemplateColumns: "236px 1fr 264px", gap: 14, padding: 14, minHeight: 0 },
+  body: { flex: 1, display: "grid", gridTemplateColumns: "300px 1fr 340px", gap: 20, padding: 20, minHeight: 0 },
 
   leftPanel: { position: "relative", background: C.surface, border: `1px solid ${C.line}`, borderRadius: 16, padding: 18, display: "flex", flexDirection: "column", overflow: "hidden" },
   panelLabel: { fontSize: 11, fontWeight: 600, color: C.textLo, textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 14 },
