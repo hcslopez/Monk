@@ -7,6 +7,12 @@ import {
 import {
   BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Cell
 } from "recharts";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
+);
 
 /* ================================================================== */
 /*  Theme + helpers                                                    */
@@ -69,74 +75,69 @@ function playChime() {
 /* ================================================================== */
 export default function App() {
   const [booting, setBooting] = useState(true);
-  const [accounts, setAccounts] = useState({});   // email -> {email,password,createdAt}
-  const [session, setSession] = useState(null);   // current email
-  const [proMap, setProMap] = useState({});       // email -> {status,trialEnds,purchasedAt}
-  const [tx, setTx] = useState([]);               // [{email,type,amount,ts}]
+  const [session, setSession] = useState(null);
+  const [proMap, setProMap] = useState({});
+  const [tx, setTx] = useState([]);
   const [showAdmin, setShowAdmin] = useState(false);
 
   useEffect(() => {
-    (async () => {
-      const a = await store.get("flowpro-accounts");
-      const s = await store.get("flowpro-session");
-      const p = await store.get("flowpro-pro");
-      const t = await store.get("flowpro-tx");
-      if (a) try { setAccounts(JSON.parse(a)); } catch (_) {}
-      if (p) try { setProMap(JSON.parse(p)); } catch (_) {}
-      if (t) try { setTx(JSON.parse(t)); } catch (_) {}
-      if (s) setSession(s);
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session?.user ?? null);
       setBooting(false);
-    })();
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => {
+      setSession(s?.user ?? null);
+    });
+    return () => subscription.unsubscribe();
   }, []);
 
-  useEffect(() => { if (!booting) store.set("flowpro-accounts", JSON.stringify(accounts)); }, [accounts, booting]);
-  useEffect(() => { if (!booting) store.set("flowpro-pro", JSON.stringify(proMap)); }, [proMap, booting]);
-  useEffect(() => { if (!booting) store.set("flowpro-tx", JSON.stringify(tx)); }, [tx, booting]);
-  useEffect(() => { if (!booting) store.set("flowpro-session", session || ""); }, [session, booting]);
+  useEffect(() => {
+    if (!session) return;
+    const p = localStorage.getItem(`monk-pro::${session.id}`);
+    const t = localStorage.getItem(`monk-tx::${session.id}`);
+    if (p) try { setProMap(JSON.parse(p)); } catch (_) {}
+    if (t) try { setTx(JSON.parse(t)); } catch (_) {}
+  }, [session?.id]);
 
-  const signUp = (email, password) => {
-    const e = email.trim().toLowerCase();
-    const now = Date.now();
-    setAccounts((prev) => ({ ...prev, [e]: { email: e, password, createdAt: now } }));
-    setProMap((prev) => ({ ...prev, [e]: prev[e] || { status: "free", trialEnds: 0, purchasedAt: 0 } }));
-    // stand-in for the owner email notification: logged so it appears in the owner dashboard
-    setTx((prev) => [{ email: e, type: "signup", amount: 0, ts: now }, ...prev]);
-    setSession(e);
-  };
-  const logIn = (email, password) => {
-    const e = email.trim().toLowerCase();
-    const acc = accounts[e];
-    if (!acc) return "No account found for that email.";
-    if (acc.password !== password) return "That password doesn’t match.";
-    setSession(e); return null;
-  };
-  const resetPassword = (email, newPassword) => {
-    const e = email.trim().toLowerCase();
-    if (!accounts[e]) return "No account found for that email.";
-    setAccounts((prev) => ({ ...prev, [e]: { ...prev[e], password: newPassword } }));
+  useEffect(() => { if (session) localStorage.setItem(`monk-pro::${session.id}`, JSON.stringify(proMap)); }, [proMap, session?.id]);
+  useEffect(() => { if (session) localStorage.setItem(`monk-tx::${session.id}`, JSON.stringify(tx)); }, [tx, session?.id]);
+
+  const signUp = async (email, password) => {
+    const { error } = await supabase.auth.signUp({ email, password });
+    if (error) return error.message;
+    setTx((prev) => [{ email, type: "signup", amount: 0, ts: Date.now() }, ...prev]);
     return null;
   };
-  const logOut = () => setSession(null);
+  const logIn = async (email, password) => {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    return error ? error.message : null;
+  };
+  const resetPassword = async (email) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
+    return error ? error.message : null;
+  };
+  const logOut = () => supabase.auth.signOut();
 
   const startTrial = () => {
     const ends = Date.now() + TRIAL_DAYS * 86400000;
-    setProMap((prev) => ({ ...prev, [session]: { ...(prev[session] || {}), status: "trial", trialEnds: ends } }));
-    setTx((prev) => [{ email: session, type: "trial", amount: 0, ts: Date.now() }, ...prev]);
+    setProMap((prev) => ({ ...prev, status: "trial", trialEnds: ends }));
+    setTx((prev) => [{ email: session.email, type: "trial", amount: 0, ts: Date.now() }, ...prev]);
   };
   const buyLifetime = () => {
-    setProMap((prev) => ({ ...prev, [session]: { status: "lifetime", trialEnds: 0, purchasedAt: Date.now() } }));
-    setTx((prev) => [{ email: session, type: "lifetime", amount: PRICE, ts: Date.now() }, ...prev]);
+    setProMap({ status: "lifetime", trialEnds: 0, purchasedAt: Date.now() });
+    setTx((prev) => [{ email: session.email, type: "lifetime", amount: PRICE, ts: Date.now() }, ...prev]);
   };
 
+
   const proState = useMemo(() => {
-    const p = proMap[session];
-    if (!p) return { isPro: false, status: "free", trialLeft: 0 };
+    const p = proMap;
+    if (!p?.status) return { isPro: false, status: "free", trialLeft: 0 };
     if (p.status === "lifetime") return { isPro: true, status: "lifetime", trialLeft: 0 };
     if (p.status === "trial" && Date.now() < p.trialEnds) {
       return { isPro: true, status: "trial", trialLeft: Math.ceil((p.trialEnds - Date.now()) / 86400000) };
     }
     return { isPro: false, status: p.status === "trial" ? "expired" : "free", trialLeft: 0 };
-  }, [proMap, session]);
+  }, [proMap]);
 
   if (booting) return <div style={S.bootRoot}><style>{CSS}</style><div className="flow-spin" style={S.spinner} /></div>;
 
@@ -144,10 +145,10 @@ export default function App() {
     <div style={S.appRoot}>
       <style>{CSS}</style>
       {!session ? (
-        <AuthScreen accounts={accounts} onSignUp={signUp} onLogIn={logIn} onReset={resetPassword} />
+        <AuthScreen onSignUp={signUp} onLogIn={logIn} onReset={resetPassword} />
       ) : (
         <MainApp
-          email={session}
+          email={session.email}
           proState={proState}
           onLogOut={logOut}
           onStartTrial={startTrial}
@@ -156,7 +157,7 @@ export default function App() {
         />
       )}
       {showAdmin && (
-        <AdminDashboard accounts={accounts} proMap={proMap} tx={tx} onClose={() => setShowAdmin(false)} />
+        <AdminDashboard proMap={proMap} tx={tx} onClose={() => setShowAdmin(false)} />
       )}
     </div>
   );
@@ -165,7 +166,7 @@ export default function App() {
 /* ================================================================== */
 /*  Auth screen (login / signup / forgot)                              */
 /* ================================================================== */
-function AuthScreen({ accounts, onSignUp, onLogIn, onReset }) {
+function AuthScreen({ onSignUp, onLogIn, onReset }) {
   const [view, setView] = useState("login"); // login | signup | forgot
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -176,24 +177,23 @@ function AuthScreen({ accounts, onSignUp, onLogIn, onReset }) {
 
   const validEmail = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim());
 
-  const submit = () => {
+  const submit = async () => {
     setErr(""); setDone("");
     if (!validEmail(email)) return setErr("Enter a valid email address.");
     if (view === "forgot") {
-      if (!accounts[email.trim().toLowerCase()]) return setErr("No account found for that email.");
-      if (newPw.length < 6) return setErr("New password needs at least 6 characters.");
-      const e = onReset(email, newPw);
+      const e = await onReset(email.trim());
       if (e) return setErr(e);
-      setDone("Password updated. You can log in now.");
-      setView("login"); setPassword(""); setNewPw("");
+      setDone("Check your email for a reset link.");
       return;
     }
     if (password.length < 6) return setErr("Password needs at least 6 characters.");
     if (view === "signup") {
-      if (accounts[email.trim().toLowerCase()]) return setErr("An account with that email already exists.");
-      onSignUp(email, password);
+      const e = await onSignUp(email, password);
+      if (e) return setErr(e);
+      setDone("Account created! Check your email to confirm, then log in.");
+      setView("login");
     } else {
-      const e = onLogIn(email, password);
+      const e = await onLogIn(email, password);
       if (e) return setErr(e);
     }
   };
@@ -247,28 +247,14 @@ function AuthScreen({ accounts, onSignUp, onLogIn, onReset }) {
             </div>
           </>
         ) : (
-          <>
-            <label style={S.authLabel}>New password</label>
-            <div style={S.inputWrap}>
-              <KeyRound size={15} color={C.textLo} />
-              <input className="flow-input flow-focus" style={S.authInput} value={newPw} type={show ? "text" : "password"}
-                onChange={(e) => setNewPw(e.target.value)} placeholder="At least 6 characters"
-                onKeyDown={(e) => e.key === "Enter" && submit()} />
-              <button className="flow-focus" style={S.eyeBtn} onClick={() => setShow((s) => !s)} aria-label="Toggle password">
-                {show ? <EyeOff size={15} color={C.textLo} /> : <Eye size={15} color={C.textLo} />}
-              </button>
-            </div>
-            <div style={S.demoNote}>
-              In the live app this sends a secure reset link by email. Here you set it directly so you can keep testing.
-            </div>
-          </>
+          <div style={S.demoNote}>Enter your email above and we'll send you a reset link.</div>
         )}
 
         {err && <div style={S.authErr}>{err}</div>}
         {done && <div style={S.authOk}>{done}</div>}
 
         <button className="flow-press flow-focus" style={S.authPrimary} onClick={submit}>
-          {view === "login" ? "Log in" : view === "signup" ? "Create account" : "Set new password"}
+          {view === "login" ? "Log in" : view === "signup" ? "Create account" : "Send reset link"}
         </button>
 
         <div style={S.authFoot}>
@@ -277,7 +263,7 @@ function AuthScreen({ accounts, onSignUp, onLogIn, onReset }) {
           {view === "signup" && <span style={{ color: C.textLo, fontSize: 12.5 }}>Free to start · upgrade anytime</span>}
         </div>
       </div>
-      <div style={S.authLegal}>Prototype — accounts are stored on this device for testing, not on a real server yet.</div>
+      <div style={S.authLegal}>Accounts are real and saved securely via Supabase.</div>
     </div>
   );
 }
@@ -777,12 +763,11 @@ function OwnerGate({ onClose, onPass }) {
   );
 }
 
-function AdminDashboard({ accounts, proMap, tx, onClose }) {
-  const users = Object.values(accounts);
+function AdminDashboard({ proMap, tx, onClose }) {
   const lifetimeTx = tx.filter((t) => t.type === "lifetime");
   const revenue = lifetimeTx.reduce((s, t) => s + t.amount, 0);
-  const proCount = Object.values(proMap).filter((p) => p.status === "lifetime").length;
-  const trials = Object.values(proMap).filter((p) => p.status === "trial" && Date.now() < p.trialEnds).length;
+  const isPro = proMap?.status === "lifetime";
+  const isTrial = proMap?.status === "trial";
   const signups = tx.filter((t) => t.type === "signup");
 
   return (
@@ -795,9 +780,9 @@ function AdminDashboard({ accounts, proMap, tx, onClose }) {
 
         <div style={S.adminGrid}>
           <AdminTile label="Revenue" value={`$${revenue.toFixed(2)}`} accent />
-          <AdminTile label="Sign-ups" value={users.length} />
-          <AdminTile label="Lifetime members" value={proCount} />
-          <AdminTile label="Active trials" value={trials} />
+          <AdminTile label="Sign-ups" value={signups.length} />
+          <AdminTile label="Lifetime member" value={isPro ? "Yes" : "No"} />
+          <AdminTile label="Trial active" value={isTrial ? "Yes" : "No"} />
         </div>
 
         <div style={S.payoutCard}>
