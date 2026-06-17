@@ -283,30 +283,35 @@ function MainApp({ email, proState, onLogOut, onStartTrial, onBuyLifetime, onOpe
   const [adminPrompt, setAdminPrompt] = useState(false);
   const [saveState, setSaveState] = useState("saved");
 
-  const HKEY = `flowmac-history::${email}`;
-  const SKEY = `flowmac-settings::${email}`;
-
+  // Load from Supabase
   useEffect(() => {
     let alive = true;
     (async () => {
       setLoaded(false);
-      const s = await store.get(SKEY);
-      const h = await store.get(HKEY);
+      const { data } = await supabase.from("user_data").select("*").single();
       if (!alive) return;
-      setSettings(s ? { ...DEFAULT_SETTINGS, ...safeParse(s, {}) } : DEFAULT_SETTINGS);
-      setHistory(h ? safeParse(h, {}) : {});
+      if (data) {
+        setSettings({ ...DEFAULT_SETTINGS, ...(data.settings || {}) });
+        setHistory(data.history || {});
+      }
       setLoaded(true);
     })();
     return () => { alive = false; };
   }, [email]);
 
-  useEffect(() => { if (!loaded) return; setSaveState("saving"); let a = true; store.set(SKEY, JSON.stringify(settings)).then(() => a && setSaveState("saved")); return () => { a = false; }; }, [settings, loaded]);
-  useEffect(() => { if (!loaded) return; setSaveState("saving"); let a = true; store.set(HKEY, JSON.stringify(history)).then(() => a && setSaveState("saved")); return () => { a = false; }; }, [history, loaded]);
-  useEffect(() => {
-    const flush = () => { store.set(HKEY, JSON.stringify(history)); store.set(SKEY, JSON.stringify(settings)); };
-    window.addEventListener("beforeunload", flush); document.addEventListener("visibilitychange", flush);
-    return () => { window.removeEventListener("beforeunload", flush); document.removeEventListener("visibilitychange", flush); };
-  }, [history, settings]);
+  // Save to Supabase on change
+  const saveToSupabase = useCallback(async (newHistory, newSettings) => {
+    setSaveState("saving");
+    await supabase.from("user_data").upsert({
+      user_id: (await supabase.auth.getUser()).data.user.id,
+      history: newHistory,
+      settings: newSettings,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: "user_id" });
+    setSaveState("saved");
+  }, []);
+
+  useEffect(() => { if (loaded) saveToSupabase(history, settings); }, [history, settings, loaded]);
 
   const recordFlow = useCallback((seconds) => {
     const k = todayKey(); const hr = new Date().getHours();
