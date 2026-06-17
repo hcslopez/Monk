@@ -93,14 +93,24 @@ export default function App() {
 
   useEffect(() => {
     if (!session) return;
-    const p = localStorage.getItem(`monk-pro::${session.id}`);
-    const t = localStorage.getItem(`monk-tx::${session.id}`);
-    if (p) try { setProMap(JSON.parse(p)); } catch (_) {}
-    if (t) try { setTx(JSON.parse(t)); } catch (_) {}
+    (async () => {
+      const { data } = await supabase.from("user_data").select("pro, tx").eq("user_id", session.id).single();
+      if (data) {
+        if (data.pro) try { setProMap(data.pro); } catch (_) {}
+        if (data.tx) try { setTx(data.tx); } catch (_) {}
+      }
+    })();
   }, [session?.id]);
 
-  useEffect(() => { if (session) localStorage.setItem(`monk-pro::${session.id}`, JSON.stringify(proMap)); }, [proMap, session?.id]);
-  useEffect(() => { if (session) localStorage.setItem(`monk-tx::${session.id}`, JSON.stringify(tx)); }, [tx, session?.id]);
+  useEffect(() => {
+    if (!session) return;
+    supabase.from("user_data").upsert({ user_id: session.id, pro: proMap, updated_at: new Date().toISOString() }, { onConflict: "user_id" });
+  }, [proMap, session?.id]);
+
+  useEffect(() => {
+    if (!session) return;
+    supabase.from("user_data").upsert({ user_id: session.id, tx, updated_at: new Date().toISOString() }, { onConflict: "user_id" });
+  }, [tx, session?.id]);
 
   const signUp = async (email, password) => {
     const { error } = await supabase.auth.signUp({ email, password });
