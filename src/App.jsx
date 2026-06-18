@@ -1265,9 +1265,9 @@ const S = {
   demoNote: { fontSize: 11.5, color: C.textLo, lineHeight: 1.5, marginTop: 12, background: C.surface, border: `1px dashed ${C.lineStrong}`, borderRadius: 10, padding: "9px 11px" },
 
   /* window */
-  root: { minHeight: "100vh", width: "100%", display: "flex", background: C.bg, boxSizing: "border-box" },
-  window: { width: "100%", height: "100vh", display: "flex", flexDirection: "column", background: C.win, overflow: "hidden", paddingTop: "env(safe-area-inset-top)" },
-  titleBar: { height: 52, display: "flex", alignItems: "center", padding: "0 20px", borderBottom: `1px solid ${C.line}`, background: "rgba(255,255,255,0.015)", gap: 14, flexShrink: 0 },
+  root: { minHeight: "100vh", width: "100%", display: "flex", background: C.bg, boxSizing: "border-box", paddingTop: "env(safe-area-inset-top)", paddingBottom: "env(safe-area-inset-bottom)" },
+  window: { width: "100%", height: "calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom))", display: "flex", flexDirection: "column", background: C.win, overflow: "hidden" },
+  titleBar: { height: 52, display: "flex", alignItems: "center", padding: "0 16px", borderBottom: `1px solid ${C.line}`, background: C.win, gap: 10, flexShrink: 0 },
   lights: { display: "flex", gap: 8 },
   light: { width: 12, height: 12, borderRadius: "50%" },
   brand: { display: "flex", alignItems: "center", gap: 8, fontSize: 15, fontWeight: 680, letterSpacing: "-0.01em" },
@@ -1289,7 +1289,7 @@ const S = {
 
   loading: { flex: 1, display: "flex", alignItems: "center", justifyContent: "center" },
   spinner: { width: 28, height: 28, border: `2.5px solid ${C.elevated}`, borderTopColor: C.accent, borderRadius: "50%" },
-  body: { flex: 1, display: "grid", gridTemplateColumns: "300px 1fr 340px", gap: 20, padding: 20, minHeight: 0 },
+  body: { flex: 1, display: "grid", gridTemplateColumns: "220px 1fr 260px", gap: 14, padding: 14, minHeight: 0 },
 
   leftPanel: { position: "relative", background: C.surface, border: `1px solid ${C.line}`, borderRadius: 16, padding: 18, display: "flex", flexDirection: "column", overflow: "hidden" },
   panelLabel: { fontSize: 11, fontWeight: 600, color: C.textLo, textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 14 },
@@ -1383,14 +1383,21 @@ const CSS = `
 *::-webkit-scrollbar { width: 7px; height: 7px; }
 *::-webkit-scrollbar-thumb { background: ${C.elevated}; border-radius: 99px; }
 @media (prefers-reduced-motion: reduce) { .flow-breathe,.flow-pulse,.flow-fade,.flow-spin { animation: none !important; } }
-@media (max-width: 768px) {
+@media (max-width: 768px) and (orientation: portrait) {
   .bemonk-body {
     grid-template-columns: 1fr !important;
     overflow-y: auto !important;
     padding: 12px !important;
     gap: 12px !important;
-    height: calc(100vh - 52px) !important;
+    height: calc(100vh - 52px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
     -webkit-overflow-scrolling: touch;
+  }
+}
+@media (max-width: 900px) and (orientation: landscape) {
+  .bemonk-body {
+    grid-template-columns: 180px 1fr 200px !important;
+    padding: 8px !important;
+    gap: 8px !important;
   }
 }
 `;
