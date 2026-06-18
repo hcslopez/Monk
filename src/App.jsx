@@ -25,7 +25,7 @@ const C = {
   accentGlow: "rgba(61,220,151,0.20)", danger: "#F2696B", gold: "#F0C26E",
 };
 const FONT = `-apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif`;
-const OWNER_PASSWORD = "Ilovethegym.1";   // prototype gate — replace with real owner auth in production
+const OWNER_PASSWORD = "Ilovethegym.1";
 const OWNER_EMAIL = "johanlopezba1@gmail.com";
 const PRICE = 7;
 const TRIAL_DAYS = 3;
@@ -149,7 +149,6 @@ export default function App() {
     setTx((prev) => [{ email: session.email, type: "lifetime", amount: PRICE, ts: Date.now() }, ...prev]);
   };
 
-
   const proState = useMemo(() => {
     const p = proMap;
     if (!p?.status) return { isPro: false, status: "free", trialLeft: 0 };
@@ -162,10 +161,8 @@ export default function App() {
 
   const [showLanding, setShowLanding] = useState(!session);
 
-  // Once user logs in, skip landing
   useEffect(() => { if (session) setShowLanding(false); }, [session]);
 
-  // Secret owner access via URL hash
   useEffect(() => {
     if (window.location.hash === "#owner") setShowAdmin(true);
   }, []);
@@ -271,7 +268,6 @@ function LandingPage({ onGetStarted }) {
 
   return (
     <div id="bemonk-landing" style={LS.root} className="flow-fade">
-      {/* Nav */}
       <nav style={{ ...LS.nav, background: scrolled ? "rgba(10,15,13,0.92)" : "transparent", backdropFilter: scrolled ? "blur(16px)" : "none", borderBottom: scrolled ? `1px solid ${C.line}` : "1px solid transparent" }}>
         <div style={LS.navInner}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -282,7 +278,6 @@ function LandingPage({ onGetStarted }) {
         </div>
       </nav>
 
-      {/* Hero */}
       <section style={LS.hero}>
         <h1 style={LS.heroH1}>
           What can't be measured<br />can't be improved.
@@ -295,15 +290,10 @@ function LandingPage({ onGetStarted }) {
           <span style={{ color: C.textLo, fontSize: 13.5 }}>$7 once for lifetime Pro · no subscription</span>
         </div>
         <div style={LS.heroPreview}>
-          <img
-            src="/app-preview.png"
-            alt="Bemonk interface"
-            style={{ width: "100%", borderRadius: 12, display: "block" }}
-          />
+          <img src="/app-preview.png" alt="Bemonk interface" style={{ width: "100%", borderRadius: 12, display: "block" }} />
         </div>
       </section>
 
-      {/* Science */}
       <section style={{ ...LS.section, background: C.surface, borderTop: `1px solid ${C.line}`, borderBottom: `1px solid ${C.line}` }}>
         <div style={LS.sectionInner}>
           <div style={LS.eyebrow}>The research</div>
@@ -325,7 +315,6 @@ function LandingPage({ onGetStarted }) {
         </div>
       </section>
 
-      {/* Comparison */}
       <section style={LS.section}>
         <div style={LS.sectionInner}>
           <div style={LS.eyebrow}>vs. the competition</div>
@@ -353,7 +342,6 @@ function LandingPage({ onGetStarted }) {
         </div>
       </section>
 
-      {/* CTA */}
       <section style={{ ...LS.section, textAlign: "center" }}>
         <div style={{ ...LS.sectionInner, alignItems: "center" }}>
           <div style={LS.eyebrow}>Get started</div>
@@ -368,7 +356,6 @@ function LandingPage({ onGetStarted }) {
         </div>
       </section>
 
-      {/* Footer */}
       <footer style={LS.footer}>
         <span style={{ color: C.textLo, fontSize: 12 }}>© 2026 Bemonk · Built by a nursing student who didn't want to pay $49 for a timer and statistics.</span>
       </footer>
@@ -382,15 +369,11 @@ const LS = {
   navInner: { maxWidth: 960, margin: "0 auto", padding: "14px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" },
   navCta: { background: C.accent, color: C.bg, border: "none", borderRadius: 999, padding: "9px 18px", fontSize: 13.5, fontWeight: 650, cursor: "pointer", fontFamily: FONT },
   hero: { maxWidth: 720, margin: "0 auto", padding: "100px 24px 80px", textAlign: "center" },
-  heroEyebrow: { fontSize: 12.5, fontWeight: 600, color: C.accent, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 20 },
   heroH1: { fontSize: "clamp(36px, 6vw, 64px)", fontWeight: 720, lineHeight: 1.12, letterSpacing: "-0.03em", color: C.textHi, margin: "0 0 22px" },
   heroSub: { fontSize: 17, color: C.textMid, lineHeight: 1.7, maxWidth: 540, margin: "0 auto 32px" },
   heroCtas: { display: "flex", flexDirection: "column", alignItems: "center", gap: 12 },
   primaryBtn: { background: C.accent, color: C.bg, border: "none", borderRadius: 12, padding: "14px 32px", fontSize: 15, fontWeight: 680, cursor: "pointer", fontFamily: FONT, boxShadow: `0 8px 30px ${C.accentGlow}` },
   heroPreview: { marginTop: 56, background: C.surface, border: `1px solid ${C.lineStrong}`, borderRadius: 16, overflow: "hidden", maxWidth: 480, margin: "56px auto 0" },
-  previewBar: { display: "flex", alignItems: "center", gap: 6, padding: "10px 14px", borderBottom: `1px solid ${C.line}`, background: C.elevated },
-  previewDot: { width: 10, height: 10, borderRadius: "50%" },
-  previewBody: { padding: "20px 16px 16px" },
   section: { padding: "80px 24px" },
   sectionInner: { maxWidth: 720, margin: "0 auto", display: "flex", flexDirection: "column" },
   eyebrow: { fontSize: 11.5, fontWeight: 600, color: C.accent, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 14 },
@@ -402,13 +385,11 @@ const LS = {
   compCard: { background: C.surface, border: `1px solid ${C.line}`, borderRadius: 16, padding: "20px 18px" },
   compName: { fontWeight: 700, color: C.textMid, fontSize: 14, marginBottom: 16, letterSpacing: "0.02em" },
   compRow: { display: "flex", alignItems: "center", gap: 10, padding: "7px 0", borderBottom: `1px solid ${C.line}` },
-  featGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginTop: 8 },
-  featCard: { background: C.elevated, border: `1px solid ${C.line}`, borderRadius: 14, padding: "20px 18px" },
   footer: { borderTop: `1px solid ${C.line}`, padding: "24px", textAlign: "center" },
 };
 
 /* ================================================================== */
-/*  Auth screen (login / signup / forgot)                              */
+/*  Auth screen                                                        */
 /* ================================================================== */
 function AuthScreen({ onSignUp, onLogIn, onReset, onBack }) {
   const [view, setView] = useState("login");
@@ -505,12 +486,8 @@ function AuthScreen({ onSignUp, onLogIn, onReset, onBack }) {
 
         {view === "signup" && (
           <label style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer", margin: "14px 0 4px" }}>
-            <input
-              type="checkbox"
-              checked={agreed}
-              onChange={(e) => setAgreed(e.target.checked)}
-              style={{ marginTop: 3, accentColor: C.accent, width: 15, height: 15, flexShrink: 0, cursor: "pointer" }}
-            />
+            <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)}
+              style={{ marginTop: 3, accentColor: C.accent, width: 15, height: 15, flexShrink: 0, cursor: "pointer" }} />
             <span style={{ fontSize: 12.5, color: C.textMid, lineHeight: 1.55 }}>
               I have read and agree to the{" "}
               <a href="/terms.html" target="_blank" style={{ color: C.accent, textDecoration: "underline" }}>Terms of Service</a>
@@ -550,7 +527,6 @@ function MainApp({ email, proState, tx, onLogOut, onStartTrial, onBuyLifetime, o
   const [adminPrompt, setAdminPrompt] = useState(false);
   const [saveState, setSaveState] = useState("saved");
 
-  // Load from Supabase
   useEffect(() => {
     let alive = true;
     (async () => {
@@ -568,7 +544,6 @@ function MainApp({ email, proState, tx, onLogOut, onStartTrial, onBuyLifetime, o
     return () => { alive = false; };
   }, [email]);
 
-  // Save to Supabase on change
   const saveToSupabase = useCallback(async (newHistory, newSettings, newPro, newTx) => {
     setSaveState("saving");
     const { data: { user } } = await supabase.auth.getUser();
@@ -667,7 +642,6 @@ function TitleBar({ email, proState, saveState, onUpgrade, onSettings, menuOpen,
                 <button className="flow-press flow-focus" style={S.menuItem} onClick={() => { setMenuOpen(false); onLogOut(); }}>
                   <LogOut size={15} color={C.textMid} /> Log out
                 </button>
-
               </div>
             </>
           )}
@@ -678,7 +652,7 @@ function TitleBar({ email, proState, saveState, onUpgrade, onSettings, menuOpen,
 }
 
 /* ================================================================== */
-/*  Left — Stats (locked for free users)                               */
+/*  Left — Stats                                                       */
 /* ================================================================== */
 function StatsPanel({ history, range, offset, isPro, onUpgrade }) {
   const data = useMemo(() => buildRange(history, range, offset), [history, range, offset]);
@@ -688,7 +662,7 @@ function StatsPanel({ history, range, offset, isPro, onUpgrade }) {
 
   if (!isPro) {
     return (
-      <aside style={{ ...S.leftPanel, overflow: "hidden", justifyContent: "center", alignItems: "center", textAlign: "center", minHeight: 180 }}>
+      <aside style={{ ...S.leftPanel, justifyContent: "center", alignItems: "center", textAlign: "center" }}>
         <div style={{ filter: "blur(5px)", pointerEvents: "none", userSelect: "none", position: "absolute", inset: 0, padding: 18 }}>
           <div style={{ ...S.panelLabel, textAlign: "center" }}>Statistics</div>
           <div style={S.bigStat}>
@@ -736,7 +710,7 @@ function StatLine({ icon, label, value, valueColor }) {
 }
 
 /* ================================================================== */
-/*  Center — Chart (Month/Year locked for free users)                  */
+/*  Center — Chart                                                     */
 /* ================================================================== */
 const RANGES = [
   { key: "day", label: "Day", pro: false },
@@ -815,7 +789,7 @@ function ChartTip({ active, payload, label }) {
 }
 
 /* ================================================================== */
-/*  Right — Timer (PAUSE BUG FIXED)                                    */
+/*  Right — Timer                                                      */
 /* ================================================================== */
 function TimerPanel({ settings, recordFlow, todayFlows }) {
   const durationFor = useCallback(
@@ -847,8 +821,6 @@ function TimerPanel({ settings, recordFlow, todayFlows }) {
 
   const total = durationFor(mode);
 
-  // Only re-sync remaining when the *durations* change while idle.
-  // Crucially NOT keyed on `running`, so pausing never resets the clock.
   const durKey = `${settings.focusMin}-${settings.shortMin}-${settings.longMin}`;
   useEffect(() => {
     if (!runningRef.current) setRemaining(durationFor(modeRef.current));
@@ -887,7 +859,7 @@ function TimerPanel({ settings, recordFlow, todayFlows }) {
 
   const selectMode = (m) => { setRunning(false); setMode(m); setRemaining(durationFor(m)); };
   const start = () => { endRef.current = Date.now() + remaining * 1000; setRunning(true); };
-  const pause = () => setRunning(false);                       // ← holds remaining, no reset
+  const pause = () => setRunning(false);
   const reset = () => { setRunning(false); setRemaining(durationFor(mode)); };
   const skip = () => { setRunning(false); const n = advance(mode); setMode(n); setRemaining(durationFor(n)); };
 
@@ -961,7 +933,7 @@ function IconBtn({ children, onClick, aria }) {
 }
 
 /* ================================================================== */
-/*  Upgrade modal (trial + $7 lifetime + access code)                  */
+/*  Upgrade modal                                                      */
 /* ================================================================== */
 const ACCESS_CODES = ["andromeda1"];
 
@@ -994,7 +966,6 @@ function UpgradeModal({ proState, onClose, onStartTrial, onBuyLifetime }) {
             <div style={{ color: C.textMid, fontSize: 13.5, lineHeight: 1.5, marginBottom: 16 }}>
               Unlock your full statistics panel plus the monthly and yearly views. One price, yours for life.
             </div>
-
             <button className="flow-press flow-focus" style={S.planCard} onClick={() => choose("trial")}>
               <div>
                 <div style={{ fontWeight: 650, color: C.textHi, fontSize: 15 }}>Start 3-day free trial</div>
@@ -1002,7 +973,6 @@ function UpgradeModal({ proState, onClose, onStartTrial, onBuyLifetime }) {
               </div>
               <ChevronRight size={18} color={C.textMid} />
             </button>
-
             <button className="flow-press flow-focus" style={{ ...S.planCard, borderColor: C.accent, background: "rgba(61,220,151,0.06)" }} onClick={() => choose("lifetime")}>
               <div>
                 <div style={{ fontWeight: 650, color: C.textHi, fontSize: 15, display: "flex", alignItems: "center", gap: 8 }}>
@@ -1012,20 +982,13 @@ function UpgradeModal({ proState, onClose, onStartTrial, onBuyLifetime }) {
               </div>
               <ChevronRight size={18} color={C.accent} />
             </button>
-
-            <div style={S.demoNote}>Prototype — no real charge happens. The live app uses Stripe’s secure checkout for payment.</div>
-
+            <div style={S.demoNote}>Prototype — no real charge happens. The live app uses Stripe's secure checkout for payment.</div>
             <div style={{ height: 1, background: C.line, margin: "16px 0" }} />
             <div style={{ fontSize: 12.5, color: C.textMid, marginBottom: 8 }}>Have an access code?</div>
             <div style={{ display: "flex", gap: 8 }}>
-              <input
-                className="flow-input flow-focus"
-                value={code}
-                onChange={(e) => { setCode(e.target.value); setCodeErr(""); }}
-                placeholder="Enter code"
-                onKeyDown={(e) => e.key === "Enter" && redeemCode()}
-                style={{ ...S.input, flex: 1, padding: "10px 12px", fontSize: 13.5 }}
-              />
+              <input className="flow-input flow-focus" value={code} onChange={(e) => { setCode(e.target.value); setCodeErr(""); }}
+                placeholder="Enter code" onKeyDown={(e) => e.key === "Enter" && redeemCode()}
+                style={{ ...S.input, flex: 1, padding: "10px 12px", fontSize: 13.5 }} />
               <button className="flow-press flow-focus" style={{ background: C.surface, border: `1px solid ${C.lineStrong}`, borderRadius: 10, padding: "10px 14px", color: C.textHi, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: FONT, whiteSpace: "nowrap" }} onClick={redeemCode}>
                 Redeem
               </button>
@@ -1039,8 +1002,7 @@ function UpgradeModal({ proState, onClose, onStartTrial, onBuyLifetime }) {
               <span style={{ color: C.textHi, fontWeight: 600 }}>{plan === "trial" ? "3-day free trial" : "Lifetime access"}</span>
               <span style={{ color: C.accent, fontWeight: 700, fontSize: 18 }}>{plan === "trial" ? "$0.00 today" : `$${PRICE}.00`}</span>
             </div>
-            {plan === "trial" && <div style={{ color: C.textMid, fontSize: 12.5, marginBottom: 14 }}>You won’t be charged today. After {TRIAL_DAYS} days it’s a one-time ${PRICE}.</div>}
-
+            {plan === "trial" && <div style={{ color: C.textMid, fontSize: 12.5, marginBottom: 14 }}>You won't be charged today. After {TRIAL_DAYS} days it's a one-time ${PRICE}.</div>}
             <div style={S.fakeCard}>
               <div style={{ display: "flex", alignItems: "center", gap: 7, color: C.textMid, fontSize: 12, marginBottom: 10 }}>
                 <ShieldCheck size={14} color={C.accent} /> Secure checkout (demo preview)
@@ -1051,9 +1013,7 @@ function UpgradeModal({ proState, onClose, onStartTrial, onBuyLifetime }) {
                 <div style={{ ...S.fakeField, flex: 1 }}>CVC</div>
               </div>
             </div>
-
             <div style={S.demoNote}>Do not enter a real card. This is a simulation — pressing the button below just unlocks Pro so you can test it.</div>
-
             <button className="flow-press flow-focus" style={S.authPrimary} onClick={confirm}>
               {plan === "trial" ? "Start free trial" : `Pay $${PRICE} & unlock`}
             </button>
@@ -1102,24 +1062,21 @@ function AdminDashboard({ proMap, tx, onClose }) {
           <span style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 700, fontSize: 17 }}><DollarSign size={18} color={C.accent} /> Owner dashboard</span>
           <button className="flow-press flow-focus" style={S.closeBtn} onClick={onClose} aria-label="Close"><X size={16} color={C.textMid} /></button>
         </div>
-
         <div style={S.adminGrid}>
           <AdminTile label="Revenue" value={`$${revenue.toFixed(2)}`} accent />
           <AdminTile label="Sign-ups" value={signups.length} />
           <AdminTile label="Lifetime member" value={isPro ? "Yes" : "No"} />
           <AdminTile label="Trial active" value={isTrial ? "Yes" : "No"} />
         </div>
-
         <div style={S.payoutCard}>
           <div>
             <div style={{ color: C.textMid, fontSize: 12 }}>Available to withdraw</div>
             <div style={{ color: C.textHi, fontWeight: 700, fontSize: 22 }}>${revenue.toFixed(2)}</div>
           </div>
-          <button className="flow-press flow-focus" style={S.payoutBtn} onClick={() => alert("In the live app, Stripe deposits this to your bank automatically (about 2 days after each sale). No manual claim needed — I’ll connect your bank during setup.")}>
+          <button className="flow-press flow-focus" style={S.payoutBtn} onClick={() => alert("In the live app, Stripe deposits this to your bank automatically (about 2 days after each sale). No manual claim needed — I'll connect your bank during setup.")}>
             Withdraw to bank
           </button>
         </div>
-
         <div style={S.adminSection}>Recent sign-ups → notify {OWNER_EMAIL}</div>
         <div style={S.adminList}>
           {signups.length === 0 ? <div style={S.adminEmpty}>No sign-ups yet.</div> :
@@ -1127,7 +1084,6 @@ function AdminDashboard({ proMap, tx, onClose }) {
               <div key={i} style={S.adminRow}><span style={{ color: C.textHi }}>{s.email}</span><span style={{ color: C.textLo, fontSize: 12 }}>{fmtDate(s.ts)}</span></div>
             ))}
         </div>
-
         <div style={S.adminSection}>Payments</div>
         <div style={S.adminList}>
           {lifetimeTx.length === 0 ? <div style={S.adminEmpty}>No payments yet.</div> :
@@ -1135,7 +1091,6 @@ function AdminDashboard({ proMap, tx, onClose }) {
               <div key={i} style={S.adminRow}><span style={{ color: C.textHi }}>{t.email}</span><span style={{ color: C.accent, fontWeight: 600 }}>+${t.amount.toFixed(2)}</span></div>
             ))}
         </div>
-
         <div style={S.demoNote}>Prototype figures from test activity on this device. Connected to Stripe, this shows your real revenue, customers and payouts.</div>
       </div>
     </div>
@@ -1178,7 +1133,7 @@ function SettingsModal({ settings, setSettings, setHistory, onClose }) {
             <button className="flow-press flow-focus" style={{ ...S.dangerBtn, flex: 1 }} onClick={() => setConfirmReset(false)}>Cancel</button>
           </div>
         )}
-        <div style={S.modalNote}>Everything saves automatically — there’s no save button to forget.</div>
+        <div style={S.modalNote}>Everything saves automatically — there's no save button to forget.</div>
       </div>
     </div>
   );
@@ -1276,10 +1231,26 @@ const S = {
   authLegal: { marginTop: 18, fontSize: 11.5, color: C.textLo, textAlign: "center", maxWidth: 360 },
   demoNote: { fontSize: 11.5, color: C.textLo, lineHeight: 1.5, marginTop: 12, background: C.surface, border: `1px dashed ${C.lineStrong}`, borderRadius: 10, padding: "9px 11px" },
 
-  /* window */
-  root: { minHeight: "100dvh", width: "100%", display: "flex", background: C.bg, boxSizing: "border-box" },
-  window: { width: "100%", height: "100dvh", display: "flex", flexDirection: "column", background: C.win, overflow: "hidden" },
-  titleBar: { height: "calc(52px + env(safe-area-inset-top, 0px))", paddingTop: "env(safe-area-inset-top, 0px)", display: "flex", alignItems: "center", padding: "env(safe-area-inset-top, 0px) 16px 0", borderBottom: `1px solid ${C.line}`, background: C.win, gap: 10, flexShrink: 0 },
+  /* window — FIXED: no overflow:hidden, no fixed height */
+  root: { minHeight: "100dvh", width: "100%", display: "flex", flexDirection: "column", background: C.bg, boxSizing: "border-box" },
+  window: { width: "100%", minHeight: "100dvh", display: "flex", flexDirection: "column", background: C.win },
+
+  /* title bar — FIXED: safe-area only applied once, correctly */
+  titleBar: {
+    paddingTop: "env(safe-area-inset-top, 0px)",
+    paddingLeft: 16,
+    paddingRight: 16,
+    paddingBottom: 10,
+    minHeight: "calc(52px + env(safe-area-inset-top, 0px))",
+    display: "flex",
+    alignItems: "flex-end",
+    borderBottom: `1px solid ${C.line}`,
+    background: C.win,
+    gap: 10,
+    flexShrink: 0,
+    boxSizing: "border-box",
+  },
+
   lights: { display: "flex", gap: 8 },
   light: { width: 12, height: 12, borderRadius: "50%" },
   brand: { display: "flex", alignItems: "center", gap: 8, fontSize: 15, fontWeight: 680, letterSpacing: "-0.01em" },
@@ -1301,9 +1272,12 @@ const S = {
 
   loading: { flex: 1, display: "flex", alignItems: "center", justifyContent: "center" },
   spinner: { width: 28, height: 28, border: `2.5px solid ${C.elevated}`, borderTopColor: C.accent, borderRadius: "50%" },
-  body: { flex: 1, display: "grid", gridTemplateColumns: "220px 1fr 260px", gap: 14, padding: 14, minHeight: 0, overflow: "hidden" },
 
-  leftPanel: { position: "relative", background: C.surface, border: `1px solid ${C.line}`, borderRadius: 16, padding: 18, display: "flex", flexDirection: "column", overflow: "hidden" },
+  /* body — FIXED: no overflow:hidden, no minHeight:0 clamping */
+  body: { flex: 1, display: "grid", gridTemplateColumns: "220px 1fr 260px", gap: 14, padding: 14, boxSizing: "border-box" },
+
+  /* panels — FIXED: no overflow:hidden */
+  leftPanel: { position: "relative", background: C.surface, border: `1px solid ${C.line}`, borderRadius: 16, padding: 18, display: "flex", flexDirection: "column" },
   panelLabel: { fontSize: 11, fontWeight: 600, color: C.textLo, textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 14 },
   bigStat: { marginBottom: 18 },
   bigStatValue: { fontSize: 46, fontWeight: 720, color: C.accent, letterSpacing: "-0.03em", lineHeight: 1, fontVariantNumeric: "tabular-nums" },
@@ -1330,10 +1304,11 @@ const S = {
   emptyRing: { width: 56, height: 56, borderRadius: "50%", border: `4px solid ${C.elevated}`, borderTopColor: C.lineStrong },
   tip: { background: C.elevated, border: `1px solid ${C.lineStrong}`, borderRadius: 10, padding: "7px 11px", boxShadow: "0 8px 24px rgba(0,0,0,0.4)" },
 
-  rightPanel: { background: C.surface, border: `1px solid ${C.line}`, borderRadius: 16, padding: "10px 14px", display: "flex", flexDirection: "column", alignItems: "center", overflow: "hidden", minHeight: 0 },
+  /* right panel — FIXED: no overflow:hidden */
+  rightPanel: { background: C.surface, border: `1px solid ${C.line}`, borderRadius: 16, padding: "10px 14px", display: "flex", flexDirection: "column", alignItems: "center" },
   modeRow: { display: "flex", gap: 3, background: C.bg, border: `1px solid ${C.line}`, padding: 3, borderRadius: 12, width: "100%", boxSizing: "border-box", flexShrink: 0 },
   modePill: { flex: 1, border: "none", borderRadius: 9, padding: "6px 0", fontSize: 11.5, cursor: "pointer", fontFamily: FONT, transition: "all .2s" },
-  ringHolder: { display: "flex", justifyContent: "center", alignItems: "center", flex: 1, minHeight: 0, padding: "4px 0", width: "100%" },
+  ringHolder: { display: "flex", justifyContent: "center", alignItems: "center", flex: 1, minHeight: 180, padding: "4px 0", width: "100%" },
   ringTime: { fontWeight: 300, fontSize: "clamp(28px, 4vw, 46px)", letterSpacing: "-0.02em", color: C.textHi, fontVariantNumeric: "tabular-nums" },
   ringMode: { fontSize: 11.5, color: C.textMid, fontWeight: 500, marginTop: 3 },
   beadRow: { display: "flex", gap: 6, justifyContent: "center", marginBottom: 2, flexShrink: 0 },
@@ -1360,14 +1335,12 @@ const S = {
   dangerBtn: { width: "100%", background: "transparent", border: `1px solid ${C.line}`, borderRadius: 11, padding: "12px 0", color: C.danger, fontSize: 13.5, fontWeight: 600, cursor: "pointer", fontFamily: FONT },
   modalNote: { fontSize: 12, color: C.textMid, marginTop: 12, lineHeight: 1.5, textAlign: "center" },
 
-  /* upgrade */
   planCard: { width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", background: C.surface, border: `1px solid ${C.line}`, borderRadius: 14, padding: "14px 16px", marginBottom: 10, cursor: "pointer", textAlign: "left", fontFamily: FONT },
   bestTag: { fontSize: 9.5, fontWeight: 700, letterSpacing: "0.05em", color: C.bg, background: C.accent, padding: "2px 6px", borderRadius: 5 },
   checkoutSummary: { display: "flex", alignItems: "center", justifyContent: "space-between", background: C.surface, border: `1px solid ${C.line}`, borderRadius: 12, padding: "14px 16px", marginBottom: 12 },
   fakeCard: { background: C.surface, border: `1px solid ${C.line}`, borderRadius: 12, padding: 14, marginBottom: 4 },
   fakeField: { background: C.bg, border: `1px solid ${C.line}`, borderRadius: 9, padding: "11px 12px", color: C.textLo, fontSize: 12.5, marginBottom: 8 },
 
-  /* admin */
   adminGrid: { display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 10, marginBottom: 14 },
   adminTile: { background: C.surface, border: `1px solid ${C.line}`, borderRadius: 12, padding: "12px 14px" },
   payoutCard: { display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(61,220,151,0.06)", border: `1px solid rgba(61,220,151,0.22)`, borderRadius: 14, padding: "14px 16px", marginBottom: 6 },
@@ -1395,20 +1368,30 @@ const CSS = `
 *::-webkit-scrollbar { width: 7px; height: 7px; }
 *::-webkit-scrollbar-thumb { background: ${C.elevated}; border-radius: 99px; }
 @media (prefers-reduced-motion: reduce) { .flow-breathe,.flow-pulse,.flow-fade,.flow-spin { animation: none !important; } }
+
 @media (max-width: 768px) and (orientation: portrait) {
   .bemonk-body {
-    grid-template-columns: 1fr !important;
-    overflow-y: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    height: auto !important;
+    overflow: visible !important;
     padding: 10px !important;
+    padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px)) !important;
     gap: 10px !important;
     -webkit-overflow-scrolling: touch;
-    padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+  .bemonk-body > * {
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+    flex-shrink: 0 !important;
+    width: 100% !important;
   }
 }
+
 @media (orientation: landscape) and (max-height: 500px) {
   .bemonk-body {
     grid-template-columns: 160px 1fr 180px !important;
-    overflow-y: hidden !important;
     padding: 6px !important;
     gap: 6px !important;
     padding-left: calc(6px + env(safe-area-inset-left, 0px)) !important;
