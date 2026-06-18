@@ -606,7 +606,7 @@ const safeParse = (s, fb) => { try { return JSON.parse(s) ?? fb; } catch (_) { r
 function TitleBar({ email, proState, saveState, onUpgrade, onSettings, menuOpen, setMenuOpen, onLogOut, onOwner }) {
   const initial = email.charAt(0).toUpperCase();
   return (
-    <div style={S.titleBar} className="bemonk-titlebar">
+    <div style={S.titleBar}>
       <div style={S.brand}><span style={S.brandDot} />Bemonk</div>
 
       <div style={S.titleRight}>
@@ -1231,21 +1231,33 @@ const S = {
   authLegal: { marginTop: 18, fontSize: 11.5, color: C.textLo, textAlign: "center", maxWidth: 360 },
   demoNote: { fontSize: 11.5, color: C.textLo, lineHeight: 1.5, marginTop: 12, background: C.surface, border: `1px dashed ${C.lineStrong}`, borderRadius: 10, padding: "9px 11px" },
 
-  root: { height: "100dvh", width: "100%", display: "flex", flexDirection: "column", background: C.bg, boxSizing: "border-box", overflow: "hidden" },
-  window: { flex: 1, width: "100%", display: "flex", flexDirection: "column", background: C.win, overflow: "hidden", minHeight: 0 },
+  root: { width: "100%", background: C.bg },
+  window: {
+    position: "fixed",
+    top: 0, left: 0, right: 0, bottom: 0,
+    /* sit below the island — safe-area is resolved at CSS level before JS */
+    paddingTop: "env(safe-area-inset-top, 0px)",
+    display: "flex",
+    flexDirection: "column",
+    background: C.win,
+    overflow: "hidden",
+  },
 
-  /* title bar — safe-area handled by CSS class .bemonk-titlebar, not inline */
+  /* title bar — always visible, never scrolls */
   titleBar: {
     paddingLeft: 16,
     paddingRight: 16,
     paddingBottom: 10,
+    paddingTop: 10,
+    minHeight: 52,
     display: "flex",
-    alignItems: "flex-end",
+    alignItems: "center",
     borderBottom: `1px solid ${C.line}`,
     background: C.win,
     gap: 10,
     flexShrink: 0,
     boxSizing: "border-box",
+    zIndex: 10,
   },
 
   lights: { display: "flex", gap: 8 },
@@ -1350,19 +1362,7 @@ const S = {
 
 const CSS = `
 * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
-
-/* ── Island / notch safe area ─────────────────────────────────────────
-   Applied to html+body so it resolves BEFORE first paint, not after React
-   hydrates. This is the only reliable way on iOS Safari / Chrome iOS.    */
-html, body {
-  background-color: ${C.win};
-  padding-top: env(safe-area-inset-top, 0px);
-  margin: 0;
-}
-/* The title bar itself does NOT add extra top padding — html/body handles it */
-.bemonk-titlebar {
-  min-height: 52px;
-}
+html, body { margin: 0; padding: 0; background-color: ${C.win}; }
 
 .flow-fade { animation: flowFade .3s ease both; }
 @keyframes flowFade { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
@@ -1380,13 +1380,11 @@ html, body {
 *::-webkit-scrollbar-thumb { background: ${C.elevated}; border-radius: 99px; }
 @media (prefers-reduced-motion: reduce) { .flow-breathe,.flow-pulse,.flow-fade,.flow-spin { animation: none !important; } }
 
-/* ── Mobile portrait layout ───────────────────────────────────────── */
+/* Mobile portrait: body area scrolls, title bar is fixed above it via flexbox */
 @media (max-width: 768px) and (orientation: portrait) {
-  /* body area scrolls, title bar stays fixed at top */
   .bemonk-body {
     display: flex !important;
     flex-direction: column !important;
-    height: auto !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
     -webkit-overflow-scrolling: touch;
@@ -1394,30 +1392,23 @@ html, body {
     padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px)) !important;
     gap: 10px !important;
   }
-  /* every panel: natural height, no internal scroll */
   .bemonk-body > * {
-    height: auto !important;
-    min-height: auto !important;
-    overflow: visible !important;
     flex-shrink: 0 !important;
     width: 100% !important;
     box-sizing: border-box !important;
+    overflow: hidden !important;
   }
-  /* chart panel: fixed height so Recharts has a real box to draw into */
+  /* chart needs fixed height so Recharts renders bars */
   .bemonk-body > section {
     height: 380px !important;
-    min-height: 380px !important;
-    overflow: hidden !important;
   }
-  /* timer panel: fixed height so ring + controls are always fully visible */
+  /* timer needs fixed height so ring + controls are fully visible */
   .bemonk-body > aside:last-child {
     height: 420px !important;
-    min-height: 420px !important;
-    overflow: hidden !important;
   }
 }
 
-/* ── Landscape compact layout ─────────────────────────────────────── */
+/* Landscape compact */
 @media (orientation: landscape) and (max-height: 500px) {
   .bemonk-body {
     grid-template-columns: 160px 1fr 180px !important;
