@@ -681,9 +681,30 @@ function StatsPanel({ history, range, offset, isPro, onUpgrade }) {
   const lifetime = useMemo(() => { let f = 0, s = 0; Object.values(history).forEach((d) => { f += d.flows; s += d.focusSeconds; }); return { f, s }; }, [history]);
   const rangeWord = { day: "today", week: "this week", month: "this month", year: "this year" }[range];
 
+  if (!isPro) {
+    return (
+      <aside style={{ ...S.leftPanel, overflow: "hidden", justifyContent: "center", alignItems: "center", textAlign: "center", minHeight: 120 }}>
+        <div style={{ filter: "blur(5px)", pointerEvents: "none", userSelect: "none", position: "absolute", inset: 0, padding: 18 }}>
+          <div style={S.panelLabel}>Statistics</div>
+          <div style={S.bigStat}>
+            <div style={S.bigStatValue}>7</div>
+            <div style={S.bigStatLabel}>flows this week</div>
+          </div>
+          <StatLine icon={<Clock size={14} color={C.textMid} />} label="Focus time" value="3h 20m" />
+          <StatLine icon={<Sparkles size={14} color={C.textMid} />} label="Avg / day" value="1.2" />
+        </div>
+        <div style={{ position: "relative", zIndex: 2, display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
+          <div style={S.lockBadge}><Lock size={18} color={C.accent} /></div>
+          <div style={{ fontWeight: 650, color: C.textHi, fontSize: 14 }}>Your stats, unlocked with Pro</div>
+          <button className="flow-press flow-focus" style={S.lockBtn} onClick={onUpgrade}><Crown size={13} color={C.bg} /> Unlock Bemonk Pro</button>
+        </div>
+      </aside>
+    );
+  }
+
   return (
     <aside style={S.leftPanel}>
-      <div style={{ filter: isPro ? "none" : "blur(7px)", pointerEvents: isPro ? "auto" : "none", userSelect: isPro ? "auto" : "none", flex: 1, display: "flex", flexDirection: "column" }} aria-hidden={!isPro}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
         <div style={S.panelLabel}>Statistics</div>
         <div style={S.bigStat}>
           <div style={S.bigStatValue}>{data.totalFlows}</div>
@@ -697,14 +718,6 @@ function StatsPanel({ history, range, offset, isPro, onUpgrade }) {
         <StatLine icon={<Trophy size={14} color={C.textMid} />} label="Total flows" value={lifetime.f} />
         <StatLine icon={<Clock size={14} color={C.textMid} />} label="Total focus" value={fmtDuration(lifetime.s)} />
       </div>
-
-      {!isPro && (
-        <div style={S.lockWrap}>
-          <div style={S.lockBadge}><Lock size={18} color={C.accent} /></div>
-          <div style={{ fontWeight: 650, color: C.textHi, fontSize: 14, marginTop: 10 }}>Your stats, unlocked with Pro</div>
-          <button className="flow-press flow-focus" style={{ ...S.lockBtn, marginTop: 12 }} onClick={onUpgrade}><Crown size={13} color={C.bg} /> Unlock Bemonk Pro</button>
-        </div>
-      )}
     </aside>
   );
 }
@@ -1248,7 +1261,7 @@ const S = {
 
   /* window */
   root: { minHeight: "100vh", width: "100%", display: "flex", background: C.bg, boxSizing: "border-box" },
-  window: { width: "100%", height: "100vh", display: "flex", flexDirection: "column", background: C.win, overflow: "auto" },
+  window: { width: "100%", height: "100vh", display: "flex", flexDirection: "column", background: C.win, overflow: "hidden" },
   titleBar: { height: 52, display: "flex", alignItems: "center", padding: "0 20px", borderBottom: `1px solid ${C.line}`, background: "rgba(255,255,255,0.015)", gap: 14, flexShrink: 0 },
   lights: { display: "flex", gap: 8 },
   light: { width: 12, height: 12, borderRadius: "50%" },
@@ -1273,7 +1286,7 @@ const S = {
   spinner: { width: 28, height: 28, border: `2.5px solid ${C.elevated}`, borderTopColor: C.accent, borderRadius: "50%" },
   body: { flex: 1, display: "grid", gridTemplateColumns: "300px 1fr 340px", gap: 20, padding: 20, minHeight: 0 },
 
-  leftPanel: { position: "relative", background: C.surface, border: `1px solid ${C.line}`, borderRadius: 16, padding: 18, display: "flex", flexDirection: "column", overflow: "visible", minHeight: 120 },
+  leftPanel: { position: "relative", background: C.surface, border: `1px solid ${C.line}`, borderRadius: 16, padding: 18, display: "flex", flexDirection: "column", overflow: "hidden" },
   panelLabel: { fontSize: 11, fontWeight: 600, color: C.textLo, textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 14 },
   bigStat: { marginBottom: 18 },
   bigStatValue: { fontSize: 46, fontWeight: 720, color: C.accent, letterSpacing: "-0.03em", lineHeight: 1, fontVariantNumeric: "tabular-nums" },
@@ -1366,6 +1379,13 @@ const CSS = `
 *::-webkit-scrollbar-thumb { background: ${C.elevated}; border-radius: 99px; }
 @media (prefers-reduced-motion: reduce) { .flow-breathe,.flow-pulse,.flow-fade,.flow-spin { animation: none !important; } }
 @media (max-width: 768px) {
-  .bemonk-body { grid-template-columns: 1fr !important; overflow-y: auto !important; padding: 12px !important; gap: 12px !important; height: auto !important; min-height: 0 !important; }
+  .bemonk-body {
+    grid-template-columns: 1fr !important;
+    overflow-y: auto !important;
+    padding: 12px !important;
+    gap: 12px !important;
+    height: calc(100vh - 52px) !important;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 `;
