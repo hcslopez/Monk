@@ -1231,9 +1231,8 @@ const S = {
   authLegal: { marginTop: 18, fontSize: 11.5, color: C.textLo, textAlign: "center", maxWidth: 360 },
   demoNote: { fontSize: 11.5, color: C.textLo, lineHeight: 1.5, marginTop: 12, background: C.surface, border: `1px dashed ${C.lineStrong}`, borderRadius: 10, padding: "9px 11px" },
 
-  /* window — FIXED: no overflow:hidden, no fixed height */
-  root: { minHeight: "100dvh", width: "100%", display: "flex", flexDirection: "column", background: C.bg, boxSizing: "border-box" },
-  window: { width: "100%", minHeight: "100dvh", display: "flex", flexDirection: "column", background: C.win },
+  root: { height: "100dvh", width: "100%", display: "flex", flexDirection: "column", background: C.bg, boxSizing: "border-box", overflow: "hidden" },
+  window: { width: "100%", height: "100dvh", display: "flex", flexDirection: "column", background: C.win, overflow: "hidden" },
 
   /* title bar — safe-area handled by CSS class .bemonk-titlebar, not inline */
   titleBar: {
@@ -1272,10 +1271,10 @@ const S = {
   spinner: { width: 28, height: 28, border: `2.5px solid ${C.elevated}`, borderTopColor: C.accent, borderRadius: "50%" },
 
   /* body — FIXED: no overflow:hidden, no minHeight:0 clamping */
-  body: { flex: 1, display: "grid", gridTemplateColumns: "220px 1fr 260px", gap: 14, padding: 14, boxSizing: "border-box" },
+  body: { flex: 1, display: "grid", gridTemplateColumns: "220px 1fr 260px", gap: 14, padding: 14, boxSizing: "border-box", minHeight: 0, overflow: "hidden" },
 
   /* panels — FIXED: no overflow:hidden */
-  leftPanel: { position: "relative", background: C.surface, border: `1px solid ${C.line}`, borderRadius: 16, padding: 18, display: "flex", flexDirection: "column" },
+  leftPanel: { position: "relative", background: C.surface, border: `1px solid ${C.line}`, borderRadius: 16, padding: 18, display: "flex", flexDirection: "column", minHeight: 0, overflowY: "auto" },
   panelLabel: { fontSize: 11, fontWeight: 600, color: C.textLo, textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 14 },
   bigStat: { marginBottom: 18 },
   bigStatValue: { fontSize: 46, fontWeight: 720, color: C.accent, letterSpacing: "-0.03em", lineHeight: 1, fontVariantNumeric: "tabular-nums" },
@@ -1288,7 +1287,7 @@ const S = {
   lockBadge: { width: 46, height: 46, borderRadius: 14, background: "rgba(61,220,151,0.1)", border: "1px solid rgba(61,220,151,0.25)", display: "flex", alignItems: "center", justifyContent: "center" },
   lockBtn: { marginTop: 16, display: "inline-flex", alignItems: "center", gap: 6, background: C.accent, color: C.bg, border: "none", borderRadius: 999, padding: "9px 16px", fontSize: 12.5, fontWeight: 680, cursor: "pointer", fontFamily: FONT },
 
-  centerPanel: { background: C.surface, border: `1px solid ${C.line}`, borderRadius: 16, padding: 18, display: "flex", flexDirection: "column", minWidth: 0 },
+  centerPanel: { background: C.surface, border: `1px solid ${C.line}`, borderRadius: 16, padding: 18, display: "flex", flexDirection: "column", minWidth: 0, minHeight: 0, overflowY: "auto" },
   chartHead: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap", marginTop: 8 },
   segment: { display: "inline-flex", gap: 3, background: C.bg, border: `1px solid ${C.line}`, padding: 4, borderRadius: 12 },
   segBtn: { border: "none", borderRadius: 9, padding: "8px 14px", fontSize: 12.5, cursor: "pointer", fontFamily: FONT, transition: "all .2s" },
@@ -1303,7 +1302,7 @@ const S = {
   tip: { background: C.elevated, border: `1px solid ${C.lineStrong}`, borderRadius: 10, padding: "7px 11px", boxShadow: "0 8px 24px rgba(0,0,0,0.4)" },
 
   /* right panel — FIXED: no overflow:hidden */
-  rightPanel: { background: C.surface, border: `1px solid ${C.line}`, borderRadius: 16, padding: "10px 14px", display: "flex", flexDirection: "column", alignItems: "center" },
+  rightPanel: { background: C.surface, border: `1px solid ${C.line}`, borderRadius: 16, padding: "10px 14px", display: "flex", flexDirection: "column", alignItems: "center", minHeight: 0, overflowY: "auto" },
   modeRow: { display: "flex", gap: 3, background: C.bg, border: `1px solid ${C.line}`, padding: 3, borderRadius: 12, width: "100%", boxSizing: "border-box", flexShrink: 0 },
   modePill: { flex: 1, border: "none", borderRadius: 9, padding: "6px 0", fontSize: 11.5, cursor: "pointer", fontFamily: FONT, transition: "all .2s" },
   ringHolder: { display: "flex", justifyContent: "center", alignItems: "center", flex: 1, minHeight: 180, padding: "4px 0", width: "100%" },
@@ -1377,18 +1376,31 @@ const CSS = `
     display: flex !important;
     flex-direction: column !important;
     height: auto !important;
-    overflow: visible !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch;
     padding: 10px !important;
     padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px)) !important;
     gap: 10px !important;
-    -webkit-overflow-scrolling: touch;
+    /* allow body to grow and scroll inside the fixed-height window */
+    max-height: calc(100dvh - calc(52px + env(safe-area-inset-top, 0px))) !important;
   }
   .bemonk-body > * {
     height: auto !important;
     min-height: auto !important;
     overflow: visible !important;
+    overflow-y: visible !important;
     flex-shrink: 0 !important;
     width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  /* chart panel needs an explicit height so bars render */
+  .bemonk-body > section {
+    min-height: 420px !important;
+  }
+  /* timer panel needs room for the ring + controls */
+  .bemonk-body > aside:last-child {
+    min-height: 420px !important;
   }
 }
 
