@@ -87,7 +87,7 @@
     <li><strong style="color:#ECF2EE">Account confirmation</strong> — sent once when you sign up.</li>
     <li><strong style="color:#ECF2EE">Password reset</strong> — sent only when you request it.</li>
   </ul>
-  <p>Support emails are handled via <strong style="color:#ECF2EE">ImprovMX</strong>, a mail forwarding service, which routes messages sent to support@bemonk.app to our inbox. We do not send marketing emails or newsletters.</p>
+  <p>Outgoing auth emails (signup confirmation, password reset) are sent via <strong style="color:#ECF2EE">Resend</strong>, a transactional email service. Resend receives only your email address for the purpose of delivering these messages. Support emails sent to support@bemonk.app are forwarded to our inbox via <strong style="color:#ECF2EE">ImprovMX</strong>. We do not send marketing emails or newsletters.</p>
 
   <h2>7. Cookies and tracking</h2>
   <p>Bemonk does not use advertising cookies or third-party trackers. Supabase stores a session token in your browser to keep you logged in. This is a functional cookie required for the app to work — it does not track you across other websites.</p>
