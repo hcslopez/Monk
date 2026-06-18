@@ -896,7 +896,7 @@ function TimerPanel({ settings, recordFlow, todayFlows }) {
       </div>
 
       <div style={S.ringHolder}>
-        <Ring frac={frac} accent={accent} accentDeep={accentDeep} running={running} pulse={pulse} size={Math.min(224, window.innerHeight * 0.35)}>
+        <Ring frac={frac} accent={accent} accentDeep={accentDeep} running={running} pulse={pulse} size={Math.min(200, Math.min(window.innerWidth, window.innerHeight) * 0.38)}>
           <div style={S.ringTime}>{fmtClock(remaining)}</div>
           <div style={S.ringMode}>{MODES[mode].label}</div>
         </Ring>
@@ -1266,8 +1266,8 @@ const S = {
 
   /* window */
   root: { minHeight: "100dvh", width: "100%", display: "flex", background: C.bg, boxSizing: "border-box" },
-  window: { width: "100%", height: "100dvh", display: "flex", flexDirection: "column", background: C.win, overflow: "hidden", paddingTop: "env(safe-area-inset-top, 0px)", paddingLeft: "env(safe-area-inset-left, 0px)", paddingRight: "env(safe-area-inset-right, 0px)" },
-  titleBar: { height: 52, display: "flex", alignItems: "center", padding: "0 16px", borderBottom: `1px solid ${C.line}`, background: C.win, gap: 10, flexShrink: 0, position: "sticky", top: 0, zIndex: 10 },
+  window: { width: "100%", height: "100dvh", display: "flex", flexDirection: "column", background: C.win, overflow: "hidden" },
+  titleBar: { height: "calc(52px + env(safe-area-inset-top, 0px))", paddingTop: "env(safe-area-inset-top, 0px)", display: "flex", alignItems: "center", padding: "env(safe-area-inset-top, 0px) 16px 0", borderBottom: `1px solid ${C.line}`, background: C.win, gap: 10, flexShrink: 0 },
   lights: { display: "flex", gap: 8 },
   light: { width: 12, height: 12, borderRadius: "50%" },
   brand: { display: "flex", alignItems: "center", gap: 8, fontSize: 15, fontWeight: 680, letterSpacing: "-0.01em" },
@@ -1387,21 +1387,20 @@ const CSS = `
   .bemonk-body {
     grid-template-columns: 1fr !important;
     overflow-y: auto !important;
-    padding: 12px !important;
-    gap: 12px !important;
+    padding: 10px !important;
+    gap: 10px !important;
     -webkit-overflow-scrolling: touch;
-    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+    padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px)) !important;
   }
 }
 @media (orientation: landscape) and (max-height: 500px) {
   .bemonk-body {
-    grid-template-columns: 160px 1fr 200px !important;
-    overflow-y: auto !important;
-    padding: 8px !important;
-    gap: 8px !important;
-    -webkit-overflow-scrolling: touch;
-    padding-left: calc(8px + env(safe-area-inset-left, 0px)) !important;
-    padding-right: calc(8px + env(safe-area-inset-right, 0px)) !important;
+    grid-template-columns: 160px 1fr 180px !important;
+    overflow-y: hidden !important;
+    padding: 6px !important;
+    gap: 6px !important;
+    padding-left: calc(6px + env(safe-area-inset-left, 0px)) !important;
+    padding-right: calc(6px + env(safe-area-inset-right, 0px)) !important;
   }
 }
 `;
