@@ -274,7 +274,7 @@ function LandingPage({ onGetStarted }) {
 
       {/* Hero */}
       <section style={LS.hero}>
-        <div style={LS.heroEyebrow}>Built by a nursing student. Priced like it.</div>
+        <div style={LS.heroEyebrow}>What gets measured, gets improved.</div>
         <h1 style={LS.heroH1}>
           What can't be measured<br />can't be improved.
         </h1>
@@ -361,7 +361,7 @@ function LandingPage({ onGetStarted }) {
 
       {/* Footer */}
       <footer style={LS.footer}>
-        <span style={{ color: C.textLo, fontSize: 12 }}>© 2026 Bemonk · Built by a nursing student who got tired of paying too much for a timer.</span>
+        <span style={{ color: C.textLo, fontSize: 12 }}>© 2026 Bemonk · Built by a nursing student who didn't want to pay $49 for a timer and statistics.</span>
       </footer>
     </div>
   );
@@ -600,7 +600,7 @@ function MainApp({ email, proState, tx, onLogOut, onStartTrial, onBuyLifetime, o
         {!loaded ? (
           <div style={S.loading}><div className="flow-spin" style={S.spinner} /></div>
         ) : (
-          <div style={S.body}>
+          <div style={S.body} className="bemonk-body">
             <StatsPanel history={history} range={range} offset={offset} isPro={isPro} onUpgrade={() => setShowUpgrade(true)} />
             <ChartPanel history={history} range={range} setRange={setRange} offset={offset} setOffset={setOffset} isPro={isPro} onUpgrade={() => setShowUpgrade(true)} />
             <TimerPanel settings={settings} recordFlow={recordFlow} todayFlows={todayFlows} />
@@ -932,20 +932,31 @@ function IconBtn({ children, onClick, aria }) {
 }
 
 /* ================================================================== */
-/*  Upgrade modal (trial + $7 lifetime) — simulated checkout           */
+/*  Upgrade modal (trial + $7 lifetime + access code)                  */
 /* ================================================================== */
+const ACCESS_CODES = ["andromeda1"];
+
 function UpgradeModal({ proState, onClose, onStartTrial, onBuyLifetime }) {
-  const [step, setStep] = useState("plans"); // plans | checkout
-  const [plan, setPlan] = useState(null);    // 'trial' | 'lifetime'
+  const [step, setStep] = useState("plans");
+  const [plan, setPlan] = useState(null);
+  const [code, setCode] = useState("");
+  const [codeErr, setCodeErr] = useState("");
 
   const choose = (p) => { setPlan(p); setStep("checkout"); };
   const confirm = () => { if (plan === "trial") onStartTrial(); else onBuyLifetime(); onClose(); };
+  const redeemCode = () => {
+    if (ACCESS_CODES.includes(code.trim().toLowerCase())) {
+      onBuyLifetime(); onClose();
+    } else {
+      setCodeErr("Invalid code. Try again.");
+    }
+  };
 
   return (
     <div style={S.overlay} className="flow-fade" onClick={onClose}>
       <div style={S.modal} onClick={(e) => e.stopPropagation()}>
         <div style={S.modalHead}>
-          <span style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 680, fontSize: 16 }}><Crown size={17} color={C.gold} /> Monk Pro</span>
+          <span style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 680, fontSize: 16 }}><Crown size={17} color={C.gold} /> Bemonk Pro</span>
           <button className="flow-press flow-focus" style={S.closeBtn} onClick={onClose} aria-label="Close"><X size={16} color={C.textMid} /></button>
         </div>
 
@@ -974,6 +985,23 @@ function UpgradeModal({ proState, onClose, onStartTrial, onBuyLifetime }) {
             </button>
 
             <div style={S.demoNote}>Prototype — no real charge happens. The live app uses Stripe’s secure checkout for payment.</div>
+
+            <div style={{ height: 1, background: C.line, margin: "16px 0" }} />
+            <div style={{ fontSize: 12.5, color: C.textMid, marginBottom: 8 }}>Have an access code?</div>
+            <div style={{ display: "flex", gap: 8 }}>
+              <input
+                className="flow-input flow-focus"
+                value={code}
+                onChange={(e) => { setCode(e.target.value); setCodeErr(""); }}
+                placeholder="Enter code"
+                onKeyDown={(e) => e.key === "Enter" && redeemCode()}
+                style={{ ...S.input, flex: 1, padding: "10px 12px", fontSize: 13.5 }}
+              />
+              <button className="flow-press flow-focus" style={{ background: C.surface, border: `1px solid ${C.lineStrong}`, borderRadius: 10, padding: "10px 14px", color: C.textHi, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: FONT, whiteSpace: "nowrap" }} onClick={redeemCode}>
+                Redeem
+              </button>
+            </div>
+            {codeErr && <div style={{ ...S.authErr, marginTop: 8 }}>{codeErr}</div>}
           </>
         ) : (
           <>
@@ -1221,7 +1249,7 @@ const S = {
 
   /* window */
   root: { minHeight: "100vh", width: "100%", display: "flex", background: C.bg, boxSizing: "border-box" },
-  window: { width: "100%", height: "100vh", display: "flex", flexDirection: "column", background: C.win, overflow: "hidden" },
+  window: { width: "100%", height: "100vh", display: "flex", flexDirection: "column", background: C.win, overflow: "auto" },
   titleBar: { height: 52, display: "flex", alignItems: "center", padding: "0 20px", borderBottom: `1px solid ${C.line}`, background: "rgba(255,255,255,0.015)", gap: 14, flexShrink: 0 },
   lights: { display: "flex", gap: 8 },
   light: { width: 12, height: 12, borderRadius: "50%" },
@@ -1338,4 +1366,12 @@ const CSS = `
 *::-webkit-scrollbar { width: 7px; height: 7px; }
 *::-webkit-scrollbar-thumb { background: ${C.elevated}; border-radius: 99px; }
 @media (prefers-reduced-motion: reduce) { .flow-breathe,.flow-pulse,.flow-fade,.flow-spin { animation: none !important; } }
+@media (max-width: 768px) {
+  .bemonk-body { grid-template-columns: 1fr !important; grid-template-rows: auto auto auto !important; overflow-y: auto !important; padding: 12px !important; gap: 12px !important; }
+  .bemonk-left { order: 2; max-height: none !important; }
+  .bemonk-center { order: 1; min-height: 320px !important; }
+  .bemonk-right { order: 3; }
+  .bemonk-compgrid { grid-template-columns: 1fr !important; }
+  .bemonk-featgrid { grid-template-columns: 1fr !important; }
+}
 `;
