@@ -128,7 +128,7 @@ export default function App() {
   };
   const resetPassword = async (email) => {
     const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
-    return error ? error.message : null;
+    return error ? (error.message || "Failed to send reset email. Try again.") : null;
   };
   const logOut = () => supabase.auth.signOut();
 
@@ -429,10 +429,10 @@ function AuthScreen({ onSignUp, onLogIn, onReset, onBack }) {
             </div>
           </>
         ) : (
-          <div style={S.demoNote}>Enter your email above and we'll send you a reset link.</div>
+          <p style={{ fontSize: 12.5, color: C.textMid, margin: "10px 0 4px", lineHeight: 1.55 }}>Enter your email above and we'll send you a reset link.</p>
         )}
 
-        {err && <div style={S.authErr}>{err}</div>}
+        {err && <div style={S.authErr}>{typeof err === "string" ? err : "Something went wrong. Try again."}</div>}
         {done && <div style={S.authOk}>{done}</div>}
 
         {view === "signup" && (
