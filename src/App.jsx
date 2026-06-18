@@ -1406,6 +1406,17 @@ html, body { margin: 0; padding: 0; background-color: ${C.win}; }
   .bemonk-body > aside:last-child {
     height: 420px !important;
   }
+  /* reset button sizes back to mobile-friendly values */
+  .bemonk-body [aria-label="Reset"],
+  .bemonk-body [aria-label="Skip"] {
+    width: 46px !important;
+    height: 46px !important;
+  }
+  .bemonk-body [aria-label="Start"],
+  .bemonk-body [aria-label="Pause"] {
+    width: 68px !important;
+    height: 68px !important;
+  }
 }
 
 /* Landscape compact */
