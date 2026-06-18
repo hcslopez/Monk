@@ -881,8 +881,8 @@ function TimerPanel({ settings, recordFlow, todayFlows }) {
 
       <div style={S.ringHolder} ref={holderRef}>
         <Ring frac={frac} accent={accent} accentDeep={accentDeep} running={running} pulse={pulse} size={ringSize}>
-          <div style={S.ringTime}>{fmtClock(remaining)}</div>
-          <div style={S.ringMode}>{MODES[mode].label}</div>
+          <div style={S.ringTime} className="bemonk-ring-time">{fmtClock(remaining)}</div>
+          <div style={S.ringMode} className="bemonk-ring-mode">{MODES[mode].label}</div>
         </Ring>
       </div>
 
@@ -1419,7 +1419,7 @@ html, body { margin: 0; padding: 0; background-color: ${C.win}; }
   }
 }
 
-/* Landscape compact */
+/* Landscape compact - smaller ring text and buttons */
 @media (orientation: landscape) and (max-height: 500px) {
   .bemonk-body {
     grid-template-columns: 160px 1fr 180px !important;
@@ -1427,6 +1427,22 @@ html, body { margin: 0; padding: 0; background-color: ${C.win}; }
     gap: 6px !important;
     padding-left: calc(6px + env(safe-area-inset-left, 0px)) !important;
     padding-right: calc(6px + env(safe-area-inset-right, 0px)) !important;
+  }
+  .bemonk-ring-time {
+    font-size: 28px !important;
+  }
+  .bemonk-ring-mode {
+    font-size: 10px !important;
+  }
+  .bemonk-body [aria-label="Reset"],
+  .bemonk-body [aria-label="Skip"] {
+    width: 36px !important;
+    height: 36px !important;
+  }
+  .bemonk-body [aria-label="Start"],
+  .bemonk-body [aria-label="Pause"] {
+    width: 52px !important;
+    height: 52px !important;
   }
 }
 `;
