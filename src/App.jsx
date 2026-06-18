@@ -606,7 +606,7 @@ const safeParse = (s, fb) => { try { return JSON.parse(s) ?? fb; } catch (_) { r
 function TitleBar({ email, proState, saveState, onUpgrade, onSettings, menuOpen, setMenuOpen, onLogOut, onOwner }) {
   const initial = email.charAt(0).toUpperCase();
   return (
-    <div style={S.titleBar}>
+    <div style={S.titleBar} className="bemonk-titlebar">
       <div style={S.brand}><span style={S.brandDot} />Bemonk</div>
 
       <div style={S.titleRight}>
@@ -1235,13 +1235,11 @@ const S = {
   root: { minHeight: "100dvh", width: "100%", display: "flex", flexDirection: "column", background: C.bg, boxSizing: "border-box" },
   window: { width: "100%", minHeight: "100dvh", display: "flex", flexDirection: "column", background: C.win },
 
-  /* title bar — FIXED: safe-area only applied once, correctly */
+  /* title bar — safe-area handled by CSS class .bemonk-titlebar, not inline */
   titleBar: {
-    paddingTop: "env(safe-area-inset-top, 0px)",
     paddingLeft: 16,
     paddingRight: 16,
     paddingBottom: 10,
-    minHeight: "calc(52px + env(safe-area-inset-top, 0px))",
     display: "flex",
     alignItems: "flex-end",
     borderBottom: `1px solid ${C.line}`,
@@ -1368,6 +1366,11 @@ const CSS = `
 *::-webkit-scrollbar { width: 7px; height: 7px; }
 *::-webkit-scrollbar-thumb { background: ${C.elevated}; border-radius: 99px; }
 @media (prefers-reduced-motion: reduce) { .flow-breathe,.flow-pulse,.flow-fade,.flow-spin { animation: none !important; } }
+
+.bemonk-titlebar {
+  padding-top: env(safe-area-inset-top, 0px) !important;
+  min-height: calc(52px + env(safe-area-inset-top, 0px)) !important;
+}
 
 @media (max-width: 768px) and (orientation: portrait) {
   .bemonk-body {
