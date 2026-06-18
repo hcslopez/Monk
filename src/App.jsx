@@ -827,6 +827,18 @@ function TimerPanel({ settings, recordFlow, todayFlows }) {
   const [remaining, setRemaining] = useState(() => settings.focusMin * 60);
   const [cycle, setCycle] = useState(0);
   const [pulse, setPulse] = useState(false);
+  const [ringSize, setRingSize] = useState(160);
+  const holderRef = useRef(null);
+
+  useEffect(() => {
+    if (!holderRef.current) return;
+    const obs = new ResizeObserver(([e]) => {
+      const { width, height } = e.contentRect;
+      setRingSize(Math.min(width * 0.85, height * 0.85, 224));
+    });
+    obs.observe(holderRef.current);
+    return () => obs.disconnect();
+  }, []);
 
   const endRef = useRef(0);
   const completeRef = useRef(() => {});
@@ -895,8 +907,8 @@ function TimerPanel({ settings, recordFlow, todayFlows }) {
         ))}
       </div>
 
-      <div style={S.ringHolder}>
-        <Ring frac={frac} accent={accent} accentDeep={accentDeep} running={running} pulse={pulse} size={Math.min(200, Math.min(window.innerWidth, window.innerHeight) * 0.38)}>
+      <div style={S.ringHolder} ref={holderRef}>
+        <Ring frac={frac} accent={accent} accentDeep={accentDeep} running={running} pulse={pulse} size={ringSize}>
           <div style={S.ringTime}>{fmtClock(remaining)}</div>
           <div style={S.ringMode}>{MODES[mode].label}</div>
         </Ring>
@@ -1289,7 +1301,7 @@ const S = {
 
   loading: { flex: 1, display: "flex", alignItems: "center", justifyContent: "center" },
   spinner: { width: 28, height: 28, border: `2.5px solid ${C.elevated}`, borderTopColor: C.accent, borderRadius: "50%" },
-  body: { flex: 1, display: "grid", gridTemplateColumns: "220px 1fr 260px", gap: 14, padding: 14, minHeight: 0 },
+  body: { flex: 1, display: "grid", gridTemplateColumns: "220px 1fr 260px", gap: 14, padding: 14, minHeight: 0, overflow: "hidden" },
 
   leftPanel: { position: "relative", background: C.surface, border: `1px solid ${C.line}`, borderRadius: 16, padding: 18, display: "flex", flexDirection: "column", overflow: "hidden" },
   panelLabel: { fontSize: 11, fontWeight: 600, color: C.textLo, textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 14 },
@@ -1318,16 +1330,16 @@ const S = {
   emptyRing: { width: 56, height: 56, borderRadius: "50%", border: `4px solid ${C.elevated}`, borderTopColor: C.lineStrong },
   tip: { background: C.elevated, border: `1px solid ${C.lineStrong}`, borderRadius: 10, padding: "7px 11px", boxShadow: "0 8px 24px rgba(0,0,0,0.4)" },
 
-  rightPanel: { background: C.surface, border: `1px solid ${C.line}`, borderRadius: 16, padding: "14px 18px", display: "flex", flexDirection: "column", alignItems: "center", overflowY: "auto", gap: 0 },
-  modeRow: { display: "flex", gap: 3, background: C.bg, border: `1px solid ${C.line}`, padding: 4, borderRadius: 12, width: "100%", boxSizing: "border-box", flexShrink: 0 },
-  modePill: { flex: 1, border: "none", borderRadius: 9, padding: "8px 0", fontSize: 12, cursor: "pointer", fontFamily: FONT, transition: "all .2s" },
-  ringHolder: { display: "flex", justifyContent: "center", alignItems: "center", padding: "8px 0", flexShrink: 0 },
-  ringTime: { fontWeight: 300, fontSize: 46, letterSpacing: "-0.02em", color: C.textHi, fontVariantNumeric: "tabular-nums" },
-  ringMode: { fontSize: 12.5, color: C.textMid, fontWeight: 500, marginTop: 4 },
-  beadRow: { display: "flex", gap: 7, justifyContent: "center", marginBottom: 4, flexShrink: 0 },
-  bead: { width: 7, height: 7, borderRadius: "50%", transition: "all .3s" },
-  toLong: { fontSize: 11.5, color: C.textLo, marginBottom: 10, flexShrink: 0 },
-  controls: { display: "flex", alignItems: "center", justifyContent: "center", gap: 18, marginBottom: 10, flexShrink: 0 },
+  rightPanel: { background: C.surface, border: `1px solid ${C.line}`, borderRadius: 16, padding: "10px 14px", display: "flex", flexDirection: "column", alignItems: "center", overflow: "hidden", minHeight: 0 },
+  modeRow: { display: "flex", gap: 3, background: C.bg, border: `1px solid ${C.line}`, padding: 3, borderRadius: 12, width: "100%", boxSizing: "border-box", flexShrink: 0 },
+  modePill: { flex: 1, border: "none", borderRadius: 9, padding: "6px 0", fontSize: 11.5, cursor: "pointer", fontFamily: FONT, transition: "all .2s" },
+  ringHolder: { display: "flex", justifyContent: "center", alignItems: "center", flex: 1, minHeight: 0, padding: "4px 0", width: "100%" },
+  ringTime: { fontWeight: 300, fontSize: "clamp(28px, 4vw, 46px)", letterSpacing: "-0.02em", color: C.textHi, fontVariantNumeric: "tabular-nums" },
+  ringMode: { fontSize: 11.5, color: C.textMid, fontWeight: 500, marginTop: 3 },
+  beadRow: { display: "flex", gap: 6, justifyContent: "center", marginBottom: 2, flexShrink: 0 },
+  bead: { width: 6, height: 6, borderRadius: "50%", transition: "all .3s" },
+  toLong: { fontSize: 10.5, color: C.textLo, marginBottom: 6, flexShrink: 0 },
+  controls: { display: "flex", alignItems: "center", justifyContent: "center", gap: 14, marginBottom: 8, flexShrink: 0 },
   iconBtn: { width: 46, height: 46, borderRadius: "50%", background: C.bg, border: `1px solid ${C.line}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" },
   bigBtn: { width: 68, height: 68, borderRadius: "50%", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" },
   todayRow: { display: "flex", alignItems: "center", gap: 6, fontSize: 13, background: C.bg, border: `1px solid ${C.line}`, padding: "8px 14px", borderRadius: 999 },
