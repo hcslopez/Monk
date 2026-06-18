@@ -153,13 +153,20 @@ export default function App() {
     return { isPro: false, status: p.status === "trial" ? "expired" : "free", trialLeft: 0 };
   }, [proMap]);
 
+  const [showLanding, setShowLanding] = useState(!session);
+
+  // Once user logs in, skip landing
+  useEffect(() => { if (session) setShowLanding(false); }, [session]);
+
   if (booting || (session && !proLoaded)) return <div style={S.bootRoot}><style>{CSS}</style><div className="flow-spin" style={S.spinner} /></div>;
 
   return (
     <div style={S.appRoot}>
       <style>{CSS}</style>
-      {!session ? (
-        <AuthScreen onSignUp={signUp} onLogIn={logIn} onReset={resetPassword} />
+      {showLanding && !session ? (
+        <LandingPage onGetStarted={() => setShowLanding(false)} />
+      ) : !session ? (
+        <AuthScreen onSignUp={signUp} onLogIn={logIn} onReset={resetPassword} onBack={() => setShowLanding(true)} />
       ) : (
         <MainApp
           email={session.email}
@@ -181,9 +188,211 @@ export default function App() {
 }
 
 /* ================================================================== */
+/*  Landing page                                                       */
+/* ================================================================== */
+function LandingPage({ onGetStarted }) {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const el = document.getElementById("bemonk-landing");
+    if (!el) return;
+    const onScroll = () => setScrolled(el.scrollTop > 40);
+    el.addEventListener("scroll", onScroll);
+    return () => el.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return (
+    <div id="bemonk-landing" style={LS.root} className="flow-fade">
+      {/* Nav */}
+      <nav style={{ ...LS.nav, background: scrolled ? "rgba(10,15,13,0.92)" : "transparent", backdropFilter: scrolled ? "blur(16px)" : "none", borderBottom: scrolled ? `1px solid ${C.line}` : "1px solid transparent" }}>
+        <div style={LS.navInner}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ width: 9, height: 9, borderRadius: "50%", background: C.accent, boxShadow: `0 0 10px ${C.accentGlow}`, display: "block" }} />
+            <span style={{ fontSize: 16, fontWeight: 700, color: C.textHi, letterSpacing: "-0.01em" }}>Bemonk</span>
+          </div>
+          <button className="flow-press flow-focus" style={LS.navCta} onClick={onGetStarted}>Get started — free</button>
+        </div>
+      </nav>
+
+      {/* Hero */}
+      <section style={LS.hero}>
+        <div style={LS.heroEyebrow}>Built by a nursing student. Priced like it.</div>
+        <h1 style={LS.heroH1}>
+          What can't be measured<br />can't be improved.
+        </h1>
+        <p style={LS.heroSub}>
+          Bemonk tracks every focus session — called a flow — so you can see your output, build streaks, and push past yesterday. Not because you have to. Because the number on the screen makes you want to.
+        </p>
+        <div style={LS.heroCtas}>
+          <button className="flow-press flow-focus" style={LS.primaryBtn} onClick={onGetStarted}>Start for free</button>
+          <span style={{ color: C.textLo, fontSize: 13.5 }}>$7 once for lifetime Pro · no subscription</span>
+        </div>
+        <div style={LS.heroPreview}>
+          <div style={LS.previewBar}>
+            <span style={{ ...LS.previewDot, background: "#FF5F57" }} />
+            <span style={{ ...LS.previewDot, background: "#FEBC2E" }} />
+            <span style={{ ...LS.previewDot, background: "#28C840" }} />
+            <span style={{ color: C.textLo, fontSize: 12, marginLeft: 8 }}>bemonk.app</span>
+          </div>
+          <div style={LS.previewBody}>
+            {/* Mini chart mockup */}
+            <div style={{ display: "flex", alignItems: "flex-end", gap: 6, height: 80, padding: "0 8px" }}>
+              {[2, 4, 3, 6, 5, 8, 7].map((h, i) => (
+                <div key={i} style={{ flex: 1, height: `${h * 10}px`, background: i === 5 ? C.accent : C.elevated, borderRadius: "4px 4px 0 0", opacity: i === 5 ? 1 : 0.5 }} />
+              ))}
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 8px 0", fontSize: 10, color: C.textLo }}>
+              {["M","T","W","T","F","S","S"].map((d, i) => <span key={i}>{d}</span>)}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Origin story */}
+      <section style={LS.section}>
+        <div style={LS.sectionInner}>
+          <div style={LS.eyebrow}>Why it exists</div>
+          <h2 style={LS.h2}>I refused to pay $49 for a timer.</h2>
+          <p style={LS.body}>
+            I was a nursing student looking for a focus app that actually showed me my data — how many sessions I'd done, how much time I'd put in, whether I was getting better. The best one I found cost $49 a year and locked the charts behind a paywall. That felt wrong. So I built my own.
+          </p>
+          <p style={LS.body}>
+            Bemonk is that app, now available to anyone who'd rather spend $7 once than $49 every year. Everything I wanted — the timer, the weekly and monthly charts, the streak, the day-by-day breakdown — is in here. No subscription. No renewal. Yours.
+          </p>
+        </div>
+      </section>
+
+      {/* Science */}
+      <section style={{ ...LS.section, background: C.surface, borderTop: `1px solid ${C.line}`, borderBottom: `1px solid ${C.line}` }}>
+        <div style={LS.sectionInner}>
+          <div style={LS.eyebrow}>The research</div>
+          <h2 style={LS.h2}>Progress itself is the motivation.</h2>
+          <div style={LS.quoteCard}>
+            <div style={LS.quoteAccent} />
+            <div>
+              <p style={{ ...LS.body, margin: 0, color: C.textHi, lineHeight: 1.7 }}>
+                Harvard researchers at HBS studied 238 professionals through thousands of diary entries and found one thing drove motivation more than anything else — not rewards, not recognition, but simply <strong style={{ color: C.accent, fontWeight: 650 }}>making progress in meaningful work</strong>. Even small steps forward had a measurable effect on inner drive.
+              </p>
+              <p style={{ fontSize: 12, color: C.textLo, marginTop: 12 }}>
+                Amabile & Kramer, <em>The Progress Principle</em> — Harvard Business School, 2011
+              </p>
+            </div>
+          </div>
+          <p style={LS.body}>
+            That's exactly what a flow count does. Seeing 6 sessions on Tuesday and 4 on Wednesday doesn't just inform you — it challenges you. The bar on your screen becomes a quiet target. That's not gamification. That's how progress works.
+          </p>
+        </div>
+      </section>
+
+      {/* Comparison */}
+      <section style={LS.section}>
+        <div style={LS.sectionInner}>
+          <div style={LS.eyebrow}>vs. the competition</div>
+          <h2 style={LS.h2}>Full features. One price. No catch.</h2>
+          <div style={LS.compGrid}>
+            <div style={LS.compCard}>
+              <div style={LS.compName}>Other apps</div>
+              {["$49/year to unlock charts","Weekly stats behind paywall","Monthly view = premium","Yearly view = premium","Streak tracking = premium","No lifetime option"].map((item, i) => (
+                <div key={i} style={LS.compRow}>
+                  <span style={{ color: C.danger, fontSize: 16 }}>×</span>
+                  <span style={{ color: C.textMid, fontSize: 14 }}>{item}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{ ...LS.compCard, border: `1px solid ${C.accent}`, background: "rgba(61,220,151,0.04)" }}>
+              <div style={{ ...LS.compName, color: C.accent }}>Bemonk Pro</div>
+              {["$7 once — forever","Weekly charts included","Monthly view included","Yearly view included","Streak tracking included","No renewal ever"].map((item, i) => (
+                <div key={i} style={LS.compRow}>
+                  <span style={{ color: C.accent, fontSize: 16 }}>✓</span>
+                  <span style={{ color: C.textHi, fontSize: 14 }}>{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section style={{ ...LS.section, background: C.surface, borderTop: `1px solid ${C.line}`, borderBottom: `1px solid ${C.line}` }}>
+        <div style={LS.sectionInner}>
+          <div style={LS.eyebrow}>What you get</div>
+          <h2 style={LS.h2}>Built to last. Not to upsell.</h2>
+          <div style={LS.featGrid}>
+            {[
+              { title: "Flow timer", desc: "25-minute focus sessions with short and long breaks. Fully configurable." },
+              { title: "Daily chart", desc: "See which hours of the day you're sharpest. Hour-by-hour breakdown." },
+              { title: "Weekly & monthly", desc: "Spot patterns across weeks and months. Know your best stretches." },
+              { title: "Day streak", desc: "Consecutive days with at least one flow. The number you'll want to protect." },
+              { title: "Syncs everywhere", desc: "Log in from any browser or device. Your data follows your account." },
+              { title: "One payment", desc: "$7 once. No subscription. No renewal reminder. No tricks." },
+            ].map((f, i) => (
+              <div key={i} style={LS.featCard}>
+                <div style={{ width: 6, height: 6, borderRadius: "50%", background: C.accent, marginBottom: 14 }} />
+                <div style={{ fontWeight: 650, color: C.textHi, fontSize: 15, marginBottom: 8 }}>{f.title}</div>
+                <div style={{ color: C.textMid, fontSize: 13.5, lineHeight: 1.6 }}>{f.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section style={{ ...LS.section, textAlign: "center" }}>
+        <div style={{ ...LS.sectionInner, alignItems: "center" }}>
+          <div style={LS.eyebrow}>Get started</div>
+          <h2 style={{ ...LS.h2, textAlign: "center" }}>Free to start. $7 to unlock everything.</h2>
+          <p style={{ ...LS.body, textAlign: "center", maxWidth: 480, margin: "0 auto 28px" }}>
+            Create an account in under a minute. The timer is free forever. Upgrade to Pro when you want the full picture.
+          </p>
+          <button className="flow-press flow-focus" style={{ ...LS.primaryBtn, fontSize: 16, padding: "16px 40px" }} onClick={onGetStarted}>
+            Create your account
+          </button>
+          <p style={{ color: C.textLo, fontSize: 12.5, marginTop: 16 }}>No credit card required to start</p>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer style={LS.footer}>
+        <span style={{ color: C.textLo, fontSize: 12 }}>© 2026 Bemonk · Built by a nursing student who got tired of paying too much for a timer.</span>
+      </footer>
+    </div>
+  );
+}
+
+const LS = {
+  root: { height: "100vh", overflowY: "auto", background: C.bg, fontFamily: FONT, color: C.textHi, scrollBehavior: "smooth" },
+  nav: { position: "sticky", top: 0, zIndex: 10, transition: "all .3s ease" },
+  navInner: { maxWidth: 960, margin: "0 auto", padding: "14px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" },
+  navCta: { background: C.accent, color: C.bg, border: "none", borderRadius: 999, padding: "9px 18px", fontSize: 13.5, fontWeight: 650, cursor: "pointer", fontFamily: FONT },
+  hero: { maxWidth: 720, margin: "0 auto", padding: "100px 24px 80px", textAlign: "center" },
+  heroEyebrow: { fontSize: 12.5, fontWeight: 600, color: C.accent, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 20 },
+  heroH1: { fontSize: "clamp(36px, 6vw, 64px)", fontWeight: 720, lineHeight: 1.12, letterSpacing: "-0.03em", color: C.textHi, margin: "0 0 22px" },
+  heroSub: { fontSize: 17, color: C.textMid, lineHeight: 1.7, maxWidth: 540, margin: "0 auto 32px" },
+  heroCtas: { display: "flex", flexDirection: "column", alignItems: "center", gap: 12 },
+  primaryBtn: { background: C.accent, color: C.bg, border: "none", borderRadius: 12, padding: "14px 32px", fontSize: 15, fontWeight: 680, cursor: "pointer", fontFamily: FONT, boxShadow: `0 8px 30px ${C.accentGlow}` },
+  heroPreview: { marginTop: 56, background: C.surface, border: `1px solid ${C.lineStrong}`, borderRadius: 16, overflow: "hidden", maxWidth: 480, margin: "56px auto 0" },
+  previewBar: { display: "flex", alignItems: "center", gap: 6, padding: "10px 14px", borderBottom: `1px solid ${C.line}`, background: C.elevated },
+  previewDot: { width: 10, height: 10, borderRadius: "50%" },
+  previewBody: { padding: "20px 16px 16px" },
+  section: { padding: "80px 24px" },
+  sectionInner: { maxWidth: 720, margin: "0 auto", display: "flex", flexDirection: "column" },
+  eyebrow: { fontSize: 11.5, fontWeight: 600, color: C.accent, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 14 },
+  h2: { fontSize: "clamp(26px, 4vw, 42px)", fontWeight: 720, letterSpacing: "-0.025em", color: C.textHi, margin: "0 0 20px", lineHeight: 1.2 },
+  body: { fontSize: 16, color: C.textMid, lineHeight: 1.75, marginBottom: 16 },
+  quoteCard: { display: "flex", gap: 20, background: C.elevated, border: `1px solid ${C.lineStrong}`, borderRadius: 16, padding: "24px 22px", margin: "8px 0 24px" },
+  quoteAccent: { width: 3, borderRadius: 99, background: C.accent, flexShrink: 0 },
+  compGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginTop: 8 },
+  compCard: { background: C.surface, border: `1px solid ${C.line}`, borderRadius: 16, padding: "20px 18px" },
+  compName: { fontWeight: 700, color: C.textMid, fontSize: 14, marginBottom: 16, letterSpacing: "0.02em" },
+  compRow: { display: "flex", alignItems: "center", gap: 10, padding: "7px 0", borderBottom: `1px solid ${C.line}` },
+  featGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginTop: 8 },
+  featCard: { background: C.elevated, border: `1px solid ${C.line}`, borderRadius: 14, padding: "20px 18px" },
+  footer: { borderTop: `1px solid ${C.line}`, padding: "24px", textAlign: "center" },
+};
+
+/* ================================================================== */
 /*  Auth screen (login / signup / forgot)                              */
 /* ================================================================== */
-function AuthScreen({ onSignUp, onLogIn, onReset }) {
+function AuthScreen({ onSignUp, onLogIn, onReset, onBack }) {
   const [view, setView] = useState("login"); // login | signup | forgot
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -218,9 +427,14 @@ function AuthScreen({ onSignUp, onLogIn, onReset }) {
   return (
     <div style={S.authRoot}>
       <div style={S.authCard} className="flow-fade">
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 18 }}>
+          <button onClick={onBack} style={{ background: "transparent", border: "none", cursor: "pointer", color: C.textMid, display: "flex", alignItems: "center", gap: 4, fontSize: 13, fontFamily: FONT, padding: 0 }}>
+            <ChevronLeft size={16} color={C.textMid} /> Back
+          </button>
+        </div>
         <div style={S.authBrand}>
           <span style={S.brandDotLg} />
-          <span style={{ fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em" }}>Monk</span>
+          <span style={{ fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em" }}>Bemonk</span>
         </div>
         <div style={S.authTitle}>
           {view === "login" ? "Welcome back" : view === "signup" ? "Create your account" : "Reset your password"}
@@ -382,7 +596,7 @@ function TitleBar({ email, proState, saveState, onUpgrade, onSettings, menuOpen,
   const initial = email.charAt(0).toUpperCase();
   return (
     <div style={S.titleBar}>
-      <div style={S.brand}><span style={S.brandDot} />Monk</div>
+      <div style={S.brand}><span style={S.brandDot} />Bemonk</div>
 
       <div style={S.titleRight}>
         {proState.isPro ? (
