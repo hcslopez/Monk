@@ -160,6 +160,11 @@ export default function App() {
   // Once user logs in, skip landing
   useEffect(() => { if (session) setShowLanding(false); }, [session]);
 
+  // Secret owner access via URL hash
+  useEffect(() => {
+    if (window.location.hash === "#owner") setShowAdmin(true);
+  }, []);
+
   if (booting || (session && !proLoaded)) return <div style={S.bootRoot}><style>{CSS}</style><div className="flow-spin" style={S.spinner} /></div>;
 
   return (
@@ -658,9 +663,7 @@ function TitleBar({ email, proState, saveState, onUpgrade, onSettings, menuOpen,
                 <button className="flow-press flow-focus" style={S.menuItem} onClick={() => { setMenuOpen(false); onLogOut(); }}>
                   <LogOut size={15} color={C.textMid} /> Log out
                 </button>
-                <button className="flow-press flow-focus" style={{ ...S.menuItem, color: C.textLo }} onClick={onOwner} title="Owner only">
-                  <KeyRound size={15} color={C.textLo} /> Owner access
-                </button>
+
               </div>
             </>
           )}
