@@ -701,11 +701,8 @@ function StatsPanel({ history, range, offset, isPro, onUpgrade }) {
       {!isPro && (
         <div style={S.lockWrap}>
           <div style={S.lockBadge}><Lock size={18} color={C.accent} /></div>
-          <div style={{ fontWeight: 650, color: C.textHi, fontSize: 14 }}>Your stats, unlocked with Pro</div>
-          <div style={{ color: C.textMid, fontSize: 12.5, marginTop: 4, lineHeight: 1.5, padding: "0 10px" }}>
-            Weekly focus, averages, streaks and lifetime totals are part of Monk Pro.
-          </div>
-          <button className="flow-press flow-focus" style={S.lockBtn} onClick={onUpgrade}><Crown size={13} color={C.bg} /> Unlock Monk Pro</button>
+          <div style={{ fontWeight: 650, color: C.textHi, fontSize: 14, marginTop: 10 }}>Your stats, unlocked with Pro</div>
+          <button className="flow-press flow-focus" style={{ ...S.lockBtn, marginTop: 12 }} onClick={onUpgrade}><Crown size={13} color={C.bg} /> Unlock Bemonk Pro</button>
         </div>
       )}
     </aside>
@@ -1285,12 +1282,12 @@ const S = {
   statLineLabel: { display: "flex", alignItems: "center", gap: 8, fontSize: 13.5, color: C.textMid },
   statLineValue: { fontSize: 15, fontWeight: 650, fontVariantNumeric: "tabular-nums" },
   divider: { height: 1, background: C.line, margin: "10px 0 18px" },
-  lockWrap: { position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: 20, background: "rgba(12,19,16,0.55)" },
+  lockWrap: { position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: 20, background: "rgba(12,19,16,0.75)", backdropFilter: "blur(4px)", borderRadius: 16 },
   lockBadge: { width: 46, height: 46, borderRadius: 14, background: "rgba(61,220,151,0.1)", border: "1px solid rgba(61,220,151,0.25)", display: "flex", alignItems: "center", justifyContent: "center" },
   lockBtn: { marginTop: 16, display: "inline-flex", alignItems: "center", gap: 6, background: C.accent, color: C.bg, border: "none", borderRadius: 999, padding: "9px 16px", fontSize: 12.5, fontWeight: 680, cursor: "pointer", fontFamily: FONT },
 
   centerPanel: { background: C.surface, border: `1px solid ${C.line}`, borderRadius: 16, padding: 18, display: "flex", flexDirection: "column", minWidth: 0 },
-  chartHead: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" },
+  chartHead: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap", marginTop: 8 },
   segment: { display: "inline-flex", gap: 3, background: C.bg, border: `1px solid ${C.line}`, padding: 4, borderRadius: 12 },
   segBtn: { border: "none", borderRadius: 9, padding: "8px 14px", fontSize: 12.5, cursor: "pointer", fontFamily: FONT, transition: "all .2s" },
   periodNav: { display: "flex", alignItems: "center", gap: 8 },
@@ -1369,11 +1366,6 @@ const CSS = `
 *::-webkit-scrollbar-thumb { background: ${C.elevated}; border-radius: 99px; }
 @media (prefers-reduced-motion: reduce) { .flow-breathe,.flow-pulse,.flow-fade,.flow-spin { animation: none !important; } }
 @media (max-width: 768px) {
-  .bemonk-body { grid-template-columns: 1fr !important; grid-template-rows: auto auto auto !important; overflow-y: auto !important; padding: 12px !important; gap: 12px !important; }
-  .bemonk-left { order: 2; max-height: none !important; }
-  .bemonk-center { order: 1; min-height: 320px !important; }
-  .bemonk-right { order: 3; }
-  .bemonk-compgrid { grid-template-columns: 1fr !important; }
-  .bemonk-featgrid { grid-template-columns: 1fr !important; }
+  .bemonk-body { grid-template-columns: 1fr !important; overflow-y: auto !important; padding: 12px !important; gap: 12px !important; height: auto !important; min-height: 0 !important; }
 }
 `;
