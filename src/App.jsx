@@ -1273,7 +1273,7 @@ const S = {
   spinner: { width: 28, height: 28, border: `2.5px solid ${C.elevated}`, borderTopColor: C.accent, borderRadius: "50%" },
   body: { flex: 1, display: "grid", gridTemplateColumns: "300px 1fr 340px", gap: 20, padding: 20, minHeight: 0 },
 
-  leftPanel: { position: "relative", background: C.surface, border: `1px solid ${C.line}`, borderRadius: 16, padding: 18, display: "flex", flexDirection: "column", overflow: "hidden" },
+  leftPanel: { position: "relative", background: C.surface, border: `1px solid ${C.line}`, borderRadius: 16, padding: 18, display: "flex", flexDirection: "column", overflow: "visible", minHeight: 120 },
   panelLabel: { fontSize: 11, fontWeight: 600, color: C.textLo, textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 14 },
   bigStat: { marginBottom: 18 },
   bigStatValue: { fontSize: 46, fontWeight: 720, color: C.accent, letterSpacing: "-0.03em", lineHeight: 1, fontVariantNumeric: "tabular-nums" },
@@ -1282,7 +1282,7 @@ const S = {
   statLineLabel: { display: "flex", alignItems: "center", gap: 8, fontSize: 13.5, color: C.textMid },
   statLineValue: { fontSize: 15, fontWeight: 650, fontVariantNumeric: "tabular-nums" },
   divider: { height: 1, background: C.line, margin: "10px 0 18px" },
-  lockWrap: { position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: 20, background: "rgba(12,19,16,0.75)", backdropFilter: "blur(4px)", borderRadius: 16 },
+  lockWrap: { position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: 20, background: "rgba(12,19,16,0.85)", backdropFilter: "blur(4px)", borderRadius: 16, zIndex: 2 },
   lockBadge: { width: 46, height: 46, borderRadius: 14, background: "rgba(61,220,151,0.1)", border: "1px solid rgba(61,220,151,0.25)", display: "flex", alignItems: "center", justifyContent: "center" },
   lockBtn: { marginTop: 16, display: "inline-flex", alignItems: "center", gap: 6, background: C.accent, color: C.bg, border: "none", borderRadius: 999, padding: "9px 16px", fontSize: 12.5, fontWeight: 680, cursor: "pointer", fontFamily: FONT },
 
@@ -1294,7 +1294,7 @@ const S = {
   navArrow: { width: 32, height: 32, borderRadius: 9, background: C.bg, border: `1px solid ${C.line}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" },
   periodLabel: { fontSize: 13.5, fontWeight: 600, color: C.textHi, minWidth: 96, textAlign: "center" },
   chartSummary: { display: "flex", alignItems: "center", gap: 8, fontSize: 14, margin: "16px 2px 4px" },
-  chartArea: { flex: 1, minHeight: 0, marginTop: 8 },
+  chartArea: { flex: 1, minHeight: 200, marginTop: 8 },
   chartLock: { height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "0 30px" },
   emptyChart: { height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "0 30px" },
   emptyRing: { width: 56, height: 56, borderRadius: "50%", border: `4px solid ${C.elevated}`, borderTopColor: C.lineStrong },
