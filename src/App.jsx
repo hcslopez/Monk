@@ -897,11 +897,11 @@ function TimerPanel({ settings, recordFlow, todayFlows }) {
       )}
 
       <div style={S.controls}>
-        <IconBtn onClick={reset} aria="Reset"><RotateCcw size={22} /></IconBtn>
+        <IconBtn onClick={reset} aria="Reset"><RotateCcw size={24} /></IconBtn>
         <button className="flow-press flow-focus" style={{ ...S.bigBtn, background: accent, boxShadow: `0 12px 36px ${mode === "focus" ? C.accentGlow : "rgba(91,200,232,0.22)"}` }} onClick={running ? pause : start} aria-label={running ? "Pause" : "Start"}>
-          {running ? <Pause size={30} fill={C.bg} color={C.bg} /> : <Play size={30} fill={C.bg} color={C.bg} style={{ marginLeft: 3 }} />}
+          {running ? <Pause size={34} fill={C.bg} color={C.bg} /> : <Play size={34} fill={C.bg} color={C.bg} style={{ marginLeft: 3 }} />}
         </button>
-        <IconBtn onClick={skip} aria="Skip"><SkipForward size={22} /></IconBtn>
+        <IconBtn onClick={skip} aria="Skip"><SkipForward size={24} /></IconBtn>
       </div>
 
       <div style={S.todayRow}>
@@ -1283,7 +1283,7 @@ const S = {
   spinner: { width: 28, height: 28, border: `2.5px solid ${C.elevated}`, borderTopColor: C.accent, borderRadius: "50%" },
 
   /* body — FIXED: no overflow:hidden, no minHeight:0 clamping */
-  body: { flex: 1, display: "grid", gridTemplateColumns: "260px 1fr 300px", gap: 12, padding: "12px 16px 16px", boxSizing: "border-box", minHeight: 0, overflow: "hidden" },
+  body: { flex: 1, display: "grid", gridTemplateColumns: "300px 1fr 340px", gap: 12, padding: "12px 16px 16px", boxSizing: "border-box", minHeight: 0, overflow: "hidden" },
 
   /* panels — FIXED: no overflow:hidden */
   leftPanel: { position: "relative", background: C.surface, border: `1px solid ${C.line}`, borderRadius: 16, padding: 18, display: "flex", flexDirection: "column", minHeight: 0, overflowY: "auto" },
@@ -1318,14 +1318,14 @@ const S = {
   modeRow: { display: "flex", gap: 4, background: C.bg, border: `1px solid ${C.line}`, padding: 4, borderRadius: 12, width: "100%", boxSizing: "border-box", flexShrink: 0 },
   modePill: { flex: 1, border: "none", borderRadius: 9, padding: "8px 0", fontSize: 13, cursor: "pointer", fontFamily: FONT, transition: "all .2s" },
   ringHolder: { display: "flex", justifyContent: "center", alignItems: "center", flex: 1, minHeight: 180, padding: "8px 0", width: "100%" },
-  ringTime: { fontWeight: 300, fontSize: "clamp(32px, 3.5vw, 52px)", letterSpacing: "-0.02em", color: C.textHi, fontVariantNumeric: "tabular-nums" },
+  ringTime: { fontWeight: 300, fontSize: "clamp(36px, 3.8vw, 58px)", letterSpacing: "-0.02em", color: C.textHi, fontVariantNumeric: "tabular-nums" },
   ringMode: { fontSize: 11.5, color: C.textMid, fontWeight: 500, marginTop: 3 },
   beadRow: { display: "flex", gap: 7, justifyContent: "center", marginBottom: 4, flexShrink: 0 },
   bead: { width: 7, height: 7, borderRadius: "50%", transition: "all .3s" },
   toLong: { fontSize: 11.5, color: C.textLo, marginBottom: 10, flexShrink: 0 },
-  controls: { display: "flex", alignItems: "center", justifyContent: "center", gap: 18, marginBottom: 12, flexShrink: 0 },
-  iconBtn: { width: 52, height: 52, borderRadius: "50%", background: C.bg, border: `1px solid ${C.line}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" },
-  bigBtn: { width: 76, height: 76, borderRadius: "50%", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" },
+  controls: { display: "flex", alignItems: "center", justifyContent: "center", gap: 22, marginBottom: 14, flexShrink: 0 },
+  iconBtn: { width: 58, height: 58, borderRadius: "50%", background: C.bg, border: `1px solid ${C.line}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" },
+  bigBtn: { width: 86, height: 86, borderRadius: "50%", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" },
   todayRow: { display: "flex", alignItems: "center", gap: 7, fontSize: 14, background: C.bg, border: `1px solid ${C.line}`, padding: "10px 18px", borderRadius: 999 },
 
   overlay: { position: "fixed", inset: 0, background: "rgba(4,7,6,0.62)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, padding: 20 },
