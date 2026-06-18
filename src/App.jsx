@@ -168,6 +168,8 @@ export default function App() {
           onStartTrial={startTrial}
           onBuyLifetime={buyLifetime}
           onOpenAdmin={() => setShowAdmin(true)}
+          onProLoad={(p) => setProMap(p)}
+          onTxLoad={(t) => setTx(t)}
         />
       )}
       {showAdmin && (
@@ -285,7 +287,7 @@ function AuthScreen({ onSignUp, onLogIn, onReset }) {
 /* ================================================================== */
 /*  Main app                                                           */
 /* ================================================================== */
-function MainApp({ email, proState, onLogOut, onStartTrial, onBuyLifetime, onOpenAdmin }) {
+function MainApp({ email, proState, onLogOut, onStartTrial, onBuyLifetime, onOpenAdmin, onProLoad, onTxLoad }) {
   const [loaded, setLoaded] = useState(false);
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [history, setHistory] = useState({});
@@ -307,6 +309,8 @@ function MainApp({ email, proState, onLogOut, onStartTrial, onBuyLifetime, onOpe
       if (data) {
         setSettings({ ...DEFAULT_SETTINGS, ...(data.settings || {}) });
         setHistory(data.history || {});
+        if (data.pro && Object.keys(data.pro).length) onProLoad(data.pro);
+        if (data.tx && data.tx.length) onTxLoad(data.tx);
       }
       setLoaded(true);
     })();
