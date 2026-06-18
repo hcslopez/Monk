@@ -1265,9 +1265,9 @@ const S = {
   demoNote: { fontSize: 11.5, color: C.textLo, lineHeight: 1.5, marginTop: 12, background: C.surface, border: `1px dashed ${C.lineStrong}`, borderRadius: 10, padding: "9px 11px" },
 
   /* window */
-  root: { minHeight: "100vh", width: "100%", display: "flex", background: C.bg, boxSizing: "border-box", paddingTop: "env(safe-area-inset-top)", paddingBottom: "env(safe-area-inset-bottom)" },
-  window: { width: "100%", height: "calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom))", display: "flex", flexDirection: "column", background: C.win, overflow: "hidden" },
-  titleBar: { height: 52, display: "flex", alignItems: "center", padding: "0 16px", borderBottom: `1px solid ${C.line}`, background: C.win, gap: 10, flexShrink: 0 },
+  root: { minHeight: "100dvh", width: "100%", display: "flex", background: C.bg, boxSizing: "border-box" },
+  window: { width: "100%", height: "100dvh", display: "flex", flexDirection: "column", background: C.win, overflow: "hidden", paddingTop: "env(safe-area-inset-top, 0px)", paddingLeft: "env(safe-area-inset-left, 0px)", paddingRight: "env(safe-area-inset-right, 0px)" },
+  titleBar: { height: 52, display: "flex", alignItems: "center", padding: "0 16px", borderBottom: `1px solid ${C.line}`, background: C.win, gap: 10, flexShrink: 0, position: "sticky", top: 0, zIndex: 10 },
   lights: { display: "flex", gap: 8 },
   light: { width: 12, height: 12, borderRadius: "50%" },
   brand: { display: "flex", alignItems: "center", gap: 8, fontSize: 15, fontWeight: 680, letterSpacing: "-0.01em" },
@@ -1318,7 +1318,7 @@ const S = {
   emptyRing: { width: 56, height: 56, borderRadius: "50%", border: `4px solid ${C.elevated}`, borderTopColor: C.lineStrong },
   tip: { background: C.elevated, border: `1px solid ${C.lineStrong}`, borderRadius: 10, padding: "7px 11px", boxShadow: "0 8px 24px rgba(0,0,0,0.4)" },
 
-  rightPanel: { background: C.surface, border: `1px solid ${C.line}`, borderRadius: 16, padding: 18, display: "flex", flexDirection: "column", alignItems: "center" },
+  rightPanel: { background: C.surface, border: `1px solid ${C.line}`, borderRadius: 16, padding: 18, display: "flex", flexDirection: "column", alignItems: "center", overflowY: "auto" },
   modeRow: { display: "flex", gap: 3, background: C.bg, border: `1px solid ${C.line}`, padding: 4, borderRadius: 12, width: "100%", boxSizing: "border-box" },
   modePill: { flex: 1, border: "none", borderRadius: 9, padding: "8px 0", fontSize: 12, cursor: "pointer", fontFamily: FONT, transition: "all .2s" },
   ringHolder: { display: "flex", justifyContent: "center", alignItems: "center", flex: 1, padding: "12px 0", minHeight: 0 },
@@ -1389,15 +1389,19 @@ const CSS = `
     overflow-y: auto !important;
     padding: 12px !important;
     gap: 12px !important;
-    height: calc(100vh - 52px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
     -webkit-overflow-scrolling: touch;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)) !important;
   }
 }
-@media (max-width: 900px) and (orientation: landscape) {
+@media (orientation: landscape) and (max-height: 500px) {
   .bemonk-body {
-    grid-template-columns: 180px 1fr 200px !important;
+    grid-template-columns: 160px 1fr 200px !important;
+    overflow-y: auto !important;
     padding: 8px !important;
     gap: 8px !important;
+    -webkit-overflow-scrolling: touch;
+    padding-left: calc(8px + env(safe-area-inset-left, 0px)) !important;
+    padding-right: calc(8px + env(safe-area-inset-right, 0px)) !important;
   }
 }
 `;
