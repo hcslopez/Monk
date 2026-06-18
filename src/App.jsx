@@ -132,7 +132,12 @@ export default function App() {
     const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
     return error ? (error.message || "Failed to send reset email. Try again.") : null;
   };
-  const logOut = () => supabase.auth.signOut();
+  const logOut = () => {
+    setProMap({});
+    setTx([]);
+    setProLoaded(false);
+    supabase.auth.signOut();
+  };
 
   const startTrial = () => {
     const ends = Date.now() + TRIAL_DAYS * 86400000;
@@ -685,7 +690,7 @@ function StatsPanel({ history, range, offset, isPro, onUpgrade }) {
     return (
       <aside style={{ ...S.leftPanel, overflow: "hidden", justifyContent: "center", alignItems: "center", textAlign: "center", minHeight: 120 }}>
         <div style={{ filter: "blur(5px)", pointerEvents: "none", userSelect: "none", position: "absolute", inset: 0, padding: 18 }}>
-          <div style={S.panelLabel}>Statistics</div>
+          <div style={{ ...S.panelLabel, textAlign: "center" }}>Statistics</div>
           <div style={S.bigStat}>
             <div style={S.bigStatValue}>7</div>
             <div style={S.bigStatLabel}>flows this week</div>
