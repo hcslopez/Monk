@@ -91,26 +91,30 @@ export default function App() {
     return () => subscription.unsubscribe();
   }, []);
 
+  const [proLoaded, setProLoaded] = useState(false);
+
   useEffect(() => {
     if (!session) return;
+    setProLoaded(false);
     (async () => {
       const { data } = await supabase.from("user_data").select("pro, tx").eq("user_id", session.id).single();
       if (data) {
-        if (data.pro) try { setProMap(data.pro); } catch (_) {}
-        if (data.tx) try { setTx(data.tx); } catch (_) {}
+        if (data.pro && Object.keys(data.pro).length) setProMap(data.pro);
+        if (data.tx && data.tx.length) setTx(data.tx);
       }
+      setProLoaded(true);
     })();
   }, [session?.id]);
 
   useEffect(() => {
-    if (!session) return;
+    if (!session || !proLoaded) return;
     supabase.from("user_data").upsert({ user_id: session.id, pro: proMap, updated_at: new Date().toISOString() }, { onConflict: "user_id" });
-  }, [proMap, session?.id]);
+  }, [proMap, session?.id, proLoaded]);
 
   useEffect(() => {
-    if (!session) return;
+    if (!session || !proLoaded) return;
     supabase.from("user_data").upsert({ user_id: session.id, tx, updated_at: new Date().toISOString() }, { onConflict: "user_id" });
-  }, [tx, session?.id]);
+  }, [tx, session?.id, proLoaded]);
 
   const signUp = async (email, password) => {
     const { error } = await supabase.auth.signUp({ email, password });
