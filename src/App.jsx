@@ -153,7 +153,7 @@ export default function App() {
     return { isPro: false, status: p.status === "trial" ? "expired" : "free", trialLeft: 0 };
   }, [proMap]);
 
-  if (booting) return <div style={S.bootRoot}><style>{CSS}</style><div className="flow-spin" style={S.spinner} /></div>;
+  if (booting || (session && !proLoaded)) return <div style={S.bootRoot}><style>{CSS}</style><div className="flow-spin" style={S.spinner} /></div>;
 
   return (
     <div style={S.appRoot}>
