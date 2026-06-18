@@ -688,7 +688,7 @@ function StatsPanel({ history, range, offset, isPro, onUpgrade }) {
 
   if (!isPro) {
     return (
-      <aside style={{ ...S.leftPanel, overflow: "hidden", justifyContent: "center", alignItems: "center", textAlign: "center", minHeight: 120 }}>
+      <aside style={{ ...S.leftPanel, overflow: "hidden", justifyContent: "center", alignItems: "center", textAlign: "center", minHeight: 180 }}>
         <div style={{ filter: "blur(5px)", pointerEvents: "none", userSelect: "none", position: "absolute", inset: 0, padding: 18 }}>
           <div style={{ ...S.panelLabel, textAlign: "center" }}>Statistics</div>
           <div style={S.bigStat}>
@@ -1266,7 +1266,7 @@ const S = {
 
   /* window */
   root: { minHeight: "100vh", width: "100%", display: "flex", background: C.bg, boxSizing: "border-box" },
-  window: { width: "100%", height: "100vh", display: "flex", flexDirection: "column", background: C.win, overflow: "hidden" },
+  window: { width: "100%", height: "100vh", display: "flex", flexDirection: "column", background: C.win, overflow: "hidden", paddingTop: "env(safe-area-inset-top)" },
   titleBar: { height: 52, display: "flex", alignItems: "center", padding: "0 20px", borderBottom: `1px solid ${C.line}`, background: "rgba(255,255,255,0.015)", gap: 14, flexShrink: 0 },
   lights: { display: "flex", gap: 8 },
   light: { width: 12, height: 12, borderRadius: "50%" },
