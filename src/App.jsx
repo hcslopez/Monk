@@ -897,11 +897,11 @@ function TimerPanel({ settings, recordFlow, todayFlows }) {
       )}
 
       <div style={S.controls}>
-        <IconBtn onClick={reset} aria="Reset"><RotateCcw size={18} /></IconBtn>
+        <IconBtn onClick={reset} aria="Reset"><RotateCcw size={22} /></IconBtn>
         <button className="flow-press flow-focus" style={{ ...S.bigBtn, background: accent, boxShadow: `0 12px 36px ${mode === "focus" ? C.accentGlow : "rgba(91,200,232,0.22)"}` }} onClick={running ? pause : start} aria-label={running ? "Pause" : "Start"}>
-          {running ? <Pause size={26} fill={C.bg} color={C.bg} /> : <Play size={26} fill={C.bg} color={C.bg} style={{ marginLeft: 3 }} />}
+          {running ? <Pause size={30} fill={C.bg} color={C.bg} /> : <Play size={30} fill={C.bg} color={C.bg} style={{ marginLeft: 3 }} />}
         </button>
-        <IconBtn onClick={skip} aria="Skip"><SkipForward size={18} /></IconBtn>
+        <IconBtn onClick={skip} aria="Skip"><SkipForward size={22} /></IconBtn>
       </div>
 
       <div style={S.todayRow}>
@@ -1245,16 +1245,16 @@ const S = {
 
   /* title bar — always visible, never scrolls */
   titleBar: {
-    paddingLeft: 16,
-    paddingRight: 16,
-    paddingBottom: 10,
-    paddingTop: 10,
-    minHeight: 52,
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingBottom: 0,
+    paddingTop: 0,
+    height: 58,
     display: "flex",
     alignItems: "center",
     borderBottom: `1px solid ${C.line}`,
     background: C.win,
-    gap: 10,
+    gap: 12,
     flexShrink: 0,
     boxSizing: "border-box",
     zIndex: 10,
@@ -1262,7 +1262,7 @@ const S = {
 
   lights: { display: "flex", gap: 8 },
   light: { width: 12, height: 12, borderRadius: "50%" },
-  brand: { display: "flex", alignItems: "center", gap: 8, fontSize: 15, fontWeight: 680, letterSpacing: "-0.01em" },
+  brand: { display: "flex", alignItems: "center", gap: 8, fontSize: 16, fontWeight: 700, letterSpacing: "-0.01em" },
   brandDot: { width: 8, height: 8, borderRadius: "50%", background: C.accent, boxShadow: `0 0 8px ${C.accentGlow}` },
   titleRight: { marginLeft: "auto", display: "flex", alignItems: "center", gap: 9 },
   unlockBtn: { display: "flex", alignItems: "center", gap: 6, background: C.accent, color: C.bg, border: "none", borderRadius: 999, padding: "7px 14px", fontSize: 12.5, fontWeight: 680, cursor: "pointer", fontFamily: FONT },
@@ -1283,7 +1283,7 @@ const S = {
   spinner: { width: 28, height: 28, border: `2.5px solid ${C.elevated}`, borderTopColor: C.accent, borderRadius: "50%" },
 
   /* body — FIXED: no overflow:hidden, no minHeight:0 clamping */
-  body: { flex: 1, display: "grid", gridTemplateColumns: "220px 1fr 260px", gap: 14, padding: 14, boxSizing: "border-box", minHeight: 0, overflow: "hidden" },
+  body: { flex: 1, display: "grid", gridTemplateColumns: "260px 1fr 300px", gap: 12, padding: "12px 16px 16px", boxSizing: "border-box", minHeight: 0, overflow: "hidden" },
 
   /* panels — FIXED: no overflow:hidden */
   leftPanel: { position: "relative", background: C.surface, border: `1px solid ${C.line}`, borderRadius: 16, padding: 18, display: "flex", flexDirection: "column", minHeight: 0, overflowY: "auto" },
@@ -1314,19 +1314,19 @@ const S = {
   tip: { background: C.elevated, border: `1px solid ${C.lineStrong}`, borderRadius: 10, padding: "7px 11px", boxShadow: "0 8px 24px rgba(0,0,0,0.4)" },
 
   /* right panel — FIXED: no overflow:hidden */
-  rightPanel: { background: C.surface, border: `1px solid ${C.line}`, borderRadius: 16, padding: "10px 14px", display: "flex", flexDirection: "column", alignItems: "center", minHeight: 0, overflow: "hidden" },
-  modeRow: { display: "flex", gap: 3, background: C.bg, border: `1px solid ${C.line}`, padding: 3, borderRadius: 12, width: "100%", boxSizing: "border-box", flexShrink: 0 },
-  modePill: { flex: 1, border: "none", borderRadius: 9, padding: "6px 0", fontSize: 11.5, cursor: "pointer", fontFamily: FONT, transition: "all .2s" },
-  ringHolder: { display: "flex", justifyContent: "center", alignItems: "center", flex: 1, minHeight: 180, padding: "4px 0", width: "100%" },
-  ringTime: { fontWeight: 300, fontSize: "clamp(28px, 4vw, 46px)", letterSpacing: "-0.02em", color: C.textHi, fontVariantNumeric: "tabular-nums" },
+  rightPanel: { background: C.surface, border: `1px solid ${C.line}`, borderRadius: 16, padding: "14px 20px", display: "flex", flexDirection: "column", alignItems: "center", minHeight: 0, overflow: "hidden" },
+  modeRow: { display: "flex", gap: 4, background: C.bg, border: `1px solid ${C.line}`, padding: 4, borderRadius: 12, width: "100%", boxSizing: "border-box", flexShrink: 0 },
+  modePill: { flex: 1, border: "none", borderRadius: 9, padding: "8px 0", fontSize: 13, cursor: "pointer", fontFamily: FONT, transition: "all .2s" },
+  ringHolder: { display: "flex", justifyContent: "center", alignItems: "center", flex: 1, minHeight: 180, padding: "8px 0", width: "100%" },
+  ringTime: { fontWeight: 300, fontSize: "clamp(32px, 3.5vw, 52px)", letterSpacing: "-0.02em", color: C.textHi, fontVariantNumeric: "tabular-nums" },
   ringMode: { fontSize: 11.5, color: C.textMid, fontWeight: 500, marginTop: 3 },
-  beadRow: { display: "flex", gap: 6, justifyContent: "center", marginBottom: 2, flexShrink: 0 },
-  bead: { width: 6, height: 6, borderRadius: "50%", transition: "all .3s" },
-  toLong: { fontSize: 10.5, color: C.textLo, marginBottom: 6, flexShrink: 0 },
-  controls: { display: "flex", alignItems: "center", justifyContent: "center", gap: 14, marginBottom: 8, flexShrink: 0 },
-  iconBtn: { width: 46, height: 46, borderRadius: "50%", background: C.bg, border: `1px solid ${C.line}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" },
-  bigBtn: { width: 68, height: 68, borderRadius: "50%", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" },
-  todayRow: { display: "flex", alignItems: "center", gap: 6, fontSize: 13, background: C.bg, border: `1px solid ${C.line}`, padding: "8px 14px", borderRadius: 999 },
+  beadRow: { display: "flex", gap: 7, justifyContent: "center", marginBottom: 4, flexShrink: 0 },
+  bead: { width: 7, height: 7, borderRadius: "50%", transition: "all .3s" },
+  toLong: { fontSize: 11.5, color: C.textLo, marginBottom: 10, flexShrink: 0 },
+  controls: { display: "flex", alignItems: "center", justifyContent: "center", gap: 18, marginBottom: 12, flexShrink: 0 },
+  iconBtn: { width: 52, height: 52, borderRadius: "50%", background: C.bg, border: `1px solid ${C.line}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" },
+  bigBtn: { width: 76, height: 76, borderRadius: "50%", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" },
+  todayRow: { display: "flex", alignItems: "center", gap: 7, fontSize: 14, background: C.bg, border: `1px solid ${C.line}`, padding: "10px 18px", borderRadius: 999 },
 
   overlay: { position: "fixed", inset: 0, background: "rgba(4,7,6,0.62)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, padding: 20 },
   modal: { width: "100%", maxWidth: 420, maxHeight: "88vh", overflowY: "auto", background: C.win, border: `1px solid ${C.lineStrong}`, borderRadius: 18, padding: 22, boxShadow: "0 30px 90px rgba(0,0,0,0.6)" },
