@@ -79,14 +79,16 @@ export default function App() {
   const [proMap, setProMap] = useState({});
   const [tx, setTx] = useState([]);
   const [showAdmin, setShowAdmin] = useState(false);
+  const [resetMode, setResetMode] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session?.user ?? null);
       setBooting(false);
     });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, s) => {
       setSession(s?.user ?? null);
+      if (event === "PASSWORD_RECOVERY") setResetMode(true);
     });
     return () => subscription.unsubscribe();
   }, []);
@@ -163,7 +165,9 @@ export default function App() {
   return (
     <div style={S.appRoot}>
       <style>{CSS}</style>
-      {showLanding && !session ? (
+      {resetMode ? (
+        <PasswordResetScreen onDone={() => setResetMode(false)} />
+      ) : showLanding && !session ? (
         <LandingPage onGetStarted={() => setShowLanding(false)} />
       ) : !session ? (
         <AuthScreen onSignUp={signUp} onLogIn={logIn} onReset={resetPassword} onBack={() => setShowLanding(true)} />
@@ -183,6 +187,61 @@ export default function App() {
       {showAdmin && (
         <AdminDashboard proMap={proMap} tx={tx} onClose={() => setShowAdmin(false)} />
       )}
+    </div>
+  );
+}
+
+/* ================================================================== */
+/*  Password reset screen                                              */
+/* ================================================================== */
+function PasswordResetScreen({ onDone }) {
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [show, setShow] = useState(false);
+  const [err, setErr] = useState("");
+  const [done, setDone] = useState(false);
+
+  const submit = async () => {
+    setErr("");
+    if (password.length < 6) return setErr("Password needs at least 6 characters.");
+    if (password !== confirm) return setErr("Passwords don't match.");
+    const { error } = await supabase.auth.updateUser({ password });
+    if (error) return setErr(error.message || "Something went wrong.");
+    setDone(true);
+    setTimeout(() => onDone(), 2000);
+  };
+
+  return (
+    <div style={S.authRoot}>
+      <div style={S.authCard} className="flow-fade">
+        <div style={S.authBrand}><span style={S.brandDotLg} /><span style={{ fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em" }}>Bemonk</span></div>
+        <div style={S.authTitle}>{done ? "Password updated" : "Set a new password"}</div>
+        <div style={S.authSub}>{done ? "You'll be redirected in a moment." : "Choose a new password for your account."}</div>
+        {!done && (
+          <>
+            <label style={S.authLabel}>New password</label>
+            <div style={S.inputWrap}>
+              <KeyRound size={15} color={C.textLo} />
+              <input className="flow-input flow-focus" style={S.authInput} value={password} type={show ? "text" : "password"}
+                onChange={(e) => setPassword(e.target.value)} placeholder="At least 6 characters"
+                onKeyDown={(e) => e.key === "Enter" && submit()} />
+              <button className="flow-focus" style={S.eyeBtn} onClick={() => setShow(s => !s)} aria-label="Toggle">
+                {show ? <EyeOff size={15} color={C.textLo} /> : <Eye size={15} color={C.textLo} />}
+              </button>
+            </div>
+            <label style={S.authLabel}>Confirm password</label>
+            <div style={S.inputWrap}>
+              <KeyRound size={15} color={C.textLo} />
+              <input className="flow-input flow-focus" style={S.authInput} value={confirm} type={show ? "text" : "password"}
+                onChange={(e) => setConfirm(e.target.value)} placeholder="Repeat your password"
+                onKeyDown={(e) => e.key === "Enter" && submit()} />
+            </div>
+            {err && <div style={S.authErr}>{err}</div>}
+            <button className="flow-press flow-focus" style={S.authPrimary} onClick={submit}>Update password</button>
+          </>
+        )}
+        {done && <div style={S.authOk}>Done! Redirecting…</div>}
+      </div>
     </div>
   );
 }
