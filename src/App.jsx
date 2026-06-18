@@ -1232,7 +1232,7 @@ const S = {
   demoNote: { fontSize: 11.5, color: C.textLo, lineHeight: 1.5, marginTop: 12, background: C.surface, border: `1px dashed ${C.lineStrong}`, borderRadius: 10, padding: "9px 11px" },
 
   root: { height: "100dvh", width: "100%", display: "flex", flexDirection: "column", background: C.bg, boxSizing: "border-box", overflow: "hidden" },
-  window: { width: "100%", height: "100dvh", display: "flex", flexDirection: "column", background: C.win, overflow: "hidden" },
+  window: { flex: 1, width: "100%", display: "flex", flexDirection: "column", background: C.win, overflow: "hidden", minHeight: 0 },
 
   /* title bar — safe-area handled by CSS class .bemonk-titlebar, not inline */
   titleBar: {
@@ -1287,7 +1287,7 @@ const S = {
   lockBadge: { width: 46, height: 46, borderRadius: 14, background: "rgba(61,220,151,0.1)", border: "1px solid rgba(61,220,151,0.25)", display: "flex", alignItems: "center", justifyContent: "center" },
   lockBtn: { marginTop: 16, display: "inline-flex", alignItems: "center", gap: 6, background: C.accent, color: C.bg, border: "none", borderRadius: 999, padding: "9px 16px", fontSize: 12.5, fontWeight: 680, cursor: "pointer", fontFamily: FONT },
 
-  centerPanel: { background: C.surface, border: `1px solid ${C.line}`, borderRadius: 16, padding: 18, display: "flex", flexDirection: "column", minWidth: 0, minHeight: 0, overflowY: "auto" },
+  centerPanel: { background: C.surface, border: `1px solid ${C.line}`, borderRadius: 16, padding: 18, display: "flex", flexDirection: "column", minWidth: 0, minHeight: 0, overflow: "hidden" },
   chartHead: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap", marginTop: 8 },
   segment: { display: "inline-flex", gap: 3, background: C.bg, border: `1px solid ${C.line}`, padding: 4, borderRadius: 12 },
   segBtn: { border: "none", borderRadius: 9, padding: "8px 14px", fontSize: 12.5, cursor: "pointer", fontFamily: FONT, transition: "all .2s" },
@@ -1302,7 +1302,7 @@ const S = {
   tip: { background: C.elevated, border: `1px solid ${C.lineStrong}`, borderRadius: 10, padding: "7px 11px", boxShadow: "0 8px 24px rgba(0,0,0,0.4)" },
 
   /* right panel — FIXED: no overflow:hidden */
-  rightPanel: { background: C.surface, border: `1px solid ${C.line}`, borderRadius: 16, padding: "10px 14px", display: "flex", flexDirection: "column", alignItems: "center", minHeight: 0, overflowY: "auto" },
+  rightPanel: { background: C.surface, border: `1px solid ${C.line}`, borderRadius: 16, padding: "10px 14px", display: "flex", flexDirection: "column", alignItems: "center", minHeight: 0, overflow: "hidden" },
   modeRow: { display: "flex", gap: 3, background: C.bg, border: `1px solid ${C.line}`, padding: 3, borderRadius: 12, width: "100%", boxSizing: "border-box", flexShrink: 0 },
   modePill: { flex: 1, border: "none", borderRadius: 9, padding: "6px 0", fontSize: 11.5, cursor: "pointer", fontFamily: FONT, transition: "all .2s" },
   ringHolder: { display: "flex", justifyContent: "center", alignItems: "center", flex: 1, minHeight: 180, padding: "4px 0", width: "100%" },
@@ -1350,6 +1350,20 @@ const S = {
 
 const CSS = `
 * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+
+/* ── Island / notch safe area ─────────────────────────────────────────
+   Applied to html+body so it resolves BEFORE first paint, not after React
+   hydrates. This is the only reliable way on iOS Safari / Chrome iOS.    */
+html, body {
+  background-color: ${C.win};
+  padding-top: env(safe-area-inset-top, 0px);
+  margin: 0;
+}
+/* The title bar itself does NOT add extra top padding — html/body handles it */
+.bemonk-titlebar {
+  min-height: 52px;
+}
+
 .flow-fade { animation: flowFade .3s ease both; }
 @keyframes flowFade { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
 .flow-spin { animation: flowSpin .8s linear infinite; }
@@ -1366,12 +1380,9 @@ const CSS = `
 *::-webkit-scrollbar-thumb { background: ${C.elevated}; border-radius: 99px; }
 @media (prefers-reduced-motion: reduce) { .flow-breathe,.flow-pulse,.flow-fade,.flow-spin { animation: none !important; } }
 
-.bemonk-titlebar {
-  padding-top: env(safe-area-inset-top, 0px) !important;
-  min-height: calc(52px + env(safe-area-inset-top, 0px)) !important;
-}
-
+/* ── Mobile portrait layout ───────────────────────────────────────── */
 @media (max-width: 768px) and (orientation: portrait) {
+  /* body area scrolls, title bar stays fixed at top */
   .bemonk-body {
     display: flex !important;
     flex-direction: column !important;
@@ -1382,28 +1393,31 @@ const CSS = `
     padding: 10px !important;
     padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px)) !important;
     gap: 10px !important;
-    /* allow body to grow and scroll inside the fixed-height window */
-    max-height: calc(100dvh - calc(52px + env(safe-area-inset-top, 0px))) !important;
   }
+  /* every panel: natural height, no internal scroll */
   .bemonk-body > * {
     height: auto !important;
     min-height: auto !important;
     overflow: visible !important;
-    overflow-y: visible !important;
     flex-shrink: 0 !important;
     width: 100% !important;
     box-sizing: border-box !important;
   }
-  /* chart panel needs an explicit height so bars render */
+  /* chart panel: fixed height so Recharts has a real box to draw into */
   .bemonk-body > section {
-    min-height: 420px !important;
+    height: 380px !important;
+    min-height: 380px !important;
+    overflow: hidden !important;
   }
-  /* timer panel needs room for the ring + controls */
+  /* timer panel: fixed height so ring + controls are always fully visible */
   .bemonk-body > aside:last-child {
+    height: 420px !important;
     min-height: 420px !important;
+    overflow: hidden !important;
   }
 }
 
+/* ── Landscape compact layout ─────────────────────────────────────── */
 @media (orientation: landscape) and (max-height: 500px) {
   .bemonk-body {
     grid-template-columns: 160px 1fr 180px !important;
