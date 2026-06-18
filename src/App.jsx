@@ -164,6 +164,7 @@ export default function App() {
         <MainApp
           email={session.email}
           proState={proState}
+          tx={tx}
           onLogOut={logOut}
           onStartTrial={startTrial}
           onBuyLifetime={buyLifetime}
@@ -287,7 +288,7 @@ function AuthScreen({ onSignUp, onLogIn, onReset }) {
 /* ================================================================== */
 /*  Main app                                                           */
 /* ================================================================== */
-function MainApp({ email, proState, onLogOut, onStartTrial, onBuyLifetime, onOpenAdmin, onProLoad, onTxLoad }) {
+function MainApp({ email, proState, tx, onLogOut, onStartTrial, onBuyLifetime, onOpenAdmin, onProLoad, onTxLoad }) {
   const [loaded, setLoaded] = useState(false);
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [history, setHistory] = useState({});
@@ -318,18 +319,21 @@ function MainApp({ email, proState, onLogOut, onStartTrial, onBuyLifetime, onOpe
   }, [email]);
 
   // Save to Supabase on change
-  const saveToSupabase = useCallback(async (newHistory, newSettings) => {
+  const saveToSupabase = useCallback(async (newHistory, newSettings, newPro, newTx) => {
     setSaveState("saving");
+    const { data: { user } } = await supabase.auth.getUser();
     await supabase.from("user_data").upsert({
-      user_id: (await supabase.auth.getUser()).data.user.id,
+      user_id: user.id,
       history: newHistory,
       settings: newSettings,
+      pro: newPro,
+      tx: newTx,
       updated_at: new Date().toISOString(),
     }, { onConflict: "user_id" });
     setSaveState("saved");
   }, []);
 
-  useEffect(() => { if (loaded) saveToSupabase(history, settings); }, [history, settings, loaded]);
+  useEffect(() => { if (loaded) saveToSupabase(history, settings, proState, tx); }, [history, settings, proState, tx, loaded]);
 
   const recordFlow = useCallback((seconds) => {
     const k = todayKey(); const hr = new Date().getHours();
