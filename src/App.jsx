@@ -343,11 +343,11 @@ const LS = {
 /*  Auth screen (login / signup / forgot)                              */
 /* ================================================================== */
 function AuthScreen({ onSignUp, onLogIn, onReset, onBack }) {
-  const [view, setView] = useState("login"); // login | signup | forgot
+  const [view, setView] = useState("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [newPw, setNewPw] = useState("");
   const [show, setShow] = useState(false);
+  const [agreed, setAgreed] = useState(false);
   const [err, setErr] = useState("");
   const [done, setDone] = useState("");
 
@@ -364,6 +364,7 @@ function AuthScreen({ onSignUp, onLogIn, onReset, onBack }) {
     }
     if (password.length < 6) return setErr("Password needs at least 6 characters.");
     if (view === "signup") {
+      if (!agreed) return setErr("Please agree to the Terms of Service and Privacy Policy to continue.");
       const e = await onSignUp(email, password);
       if (e) return setErr(e);
       setDone("Account created! Check your email to confirm, then log in.");
@@ -434,7 +435,24 @@ function AuthScreen({ onSignUp, onLogIn, onReset, onBack }) {
         {err && <div style={S.authErr}>{err}</div>}
         {done && <div style={S.authOk}>{done}</div>}
 
-        <button className="flow-press flow-focus" style={S.authPrimary} onClick={submit}>
+        {view === "signup" && (
+          <label style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer", margin: "14px 0 4px" }}>
+            <input
+              type="checkbox"
+              checked={agreed}
+              onChange={(e) => setAgreed(e.target.checked)}
+              style={{ marginTop: 3, accentColor: C.accent, width: 15, height: 15, flexShrink: 0, cursor: "pointer" }}
+            />
+            <span style={{ fontSize: 12.5, color: C.textMid, lineHeight: 1.55 }}>
+              I have read and agree to the{" "}
+              <a href="/terms.html" target="_blank" style={{ color: C.accent, textDecoration: "underline" }}>Terms of Service</a>
+              {" "}and{" "}
+              <a href="/privacy.html" target="_blank" style={{ color: C.accent, textDecoration: "underline" }}>Privacy Policy</a>.
+            </span>
+          </label>
+        )}
+
+        <button className="flow-press flow-focus" style={{ ...S.authPrimary, opacity: view === "signup" && !agreed ? 0.5 : 1 }} onClick={submit}>
           {view === "login" ? "Log in" : view === "signup" ? "Create account" : "Send reset link"}
         </button>
 
@@ -444,7 +462,7 @@ function AuthScreen({ onSignUp, onLogIn, onReset, onBack }) {
           {view === "signup" && <span style={{ color: C.textLo, fontSize: 12.5 }}>Free to start · upgrade anytime</span>}
         </div>
       </div>
-      <div style={S.authLegal}>Accounts are real and saved securely via Supabase.</div>
+      <div style={S.authLegal}>Accounts are saved securely via Supabase.</div>
     </div>
   );
 }

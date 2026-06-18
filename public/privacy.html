@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — Bemonk</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0A0F0D;
+      color: #ECF2EE;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.75;
+    }
+    nav {
+      position: sticky; top: 0; z-index: 10;
+      background: rgba(10,15,13,0.92); backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(140,200,170,0.09);
+      padding: 14px 24px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .brand { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700; color: #ECF2EE; letter-spacing: -0.01em; text-decoration: none; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: #3DDC97; box-shadow: 0 0 10px rgba(61,220,151,0.4); }
+    .back { font-size: 13px; color: #93A39A; text-decoration: none; }
+    .back:hover { color: #ECF2EE; }
+    main { max-width: 680px; margin: 0 auto; padding: 64px 24px 96px; }
+    .eyebrow { font-size: 11.5px; font-weight: 600; color: #3DDC97; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 14px; }
+    h1 { font-size: clamp(28px, 5vw, 42px); font-weight: 720; letter-spacing: -0.025em; color: #ECF2EE; margin-bottom: 12px; line-height: 1.15; }
+    .updated { font-size: 13px; color: #5C6B62; margin-bottom: 48px; }
+    h2 { font-size: 18px; font-weight: 650; color: #ECF2EE; margin: 40px 0 12px; letter-spacing: -0.01em; }
+    p { font-size: 15.5px; color: #93A39A; margin-bottom: 14px; }
+    ul { margin: 8px 0 14px 0; padding-left: 20px; }
+    li { font-size: 15.5px; color: #93A39A; margin-bottom: 6px; line-height: 1.65; }
+    a { color: #3DDC97; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .card { background: #121A16; border: 1px solid rgba(140,200,170,0.09); border-radius: 14px; padding: 20px 22px; margin: 20px 0; }
+    .card p { margin-bottom: 0; }
+    footer { border-top: 1px solid rgba(140,200,170,0.09); padding: 24px; text-align: center; font-size: 12px; color: #5C6B62; }
+  </style>
+</head>
+<body>
+<nav>
+  <a class="brand" href="/"><span class="dot"></span>Bemonk</a>
+  <a class="back" href="/">← Back to Bemonk</a>
+</nav>
+<main>
+  <div class="eyebrow">Legal</div>
+  <h1>Privacy Policy</h1>
+  <p class="updated">Last updated: June 20, 2026</p>
+
+  <p>Bemonk is a focus tracking web application available at <a href="https://bemonk.app">bemonk.app</a>. This policy explains what data we collect, why, how it's stored, and your rights. We keep this short and honest.</p>
+
+  <h2>1. Who we are</h2>
+  <p>Bemonk is an independent product. For questions about this policy, contact us at <a href="mailto:support@bemonk.app">support@bemonk.app</a>.</p>
+
+  <h2>2. What we collect</h2>
+  <p>We collect only what's needed to run the app:</p>
+  <ul>
+    <li><strong style="color:#ECF2EE">Email address</strong> — used to create and identify your account.</li>
+    <li><strong style="color:#ECF2EE">Password</strong> — stored as a secure hash. We never see your plain-text password.</li>
+    <li><strong style="color:#ECF2EE">Focus session data</strong> — the number of flows you complete each day, time spent, and your session history.</li>
+    <li><strong style="color:#ECF2EE">App settings</strong> — your timer durations, preferences, and display name.</li>
+    <li><strong style="color:#ECF2EE">Pro/payment status</strong> — whether you have an active Pro account or trial, and when it was activated. We do not store card numbers.</li>
+  </ul>
+  <p>We do not collect your name, phone number, location, IP address, or any data beyond what's listed above.</p>
+
+  <h2>3. How we store it</h2>
+  <p>All account data is stored securely using <strong style="color:#ECF2EE">Supabase</strong>, a hosted database platform with encrypted storage and row-level security — meaning your data is only accessible by you. Supabase is SOC 2 compliant and stores data in secure US-based data centers.</p>
+  <p>Passwords are hashed using bcrypt before storage and are never readable by anyone, including us.</p>
+
+  <h2>4. Payments</h2>
+  <p>Bemonk Pro is a one-time $7 lifetime purchase processed through <strong style="color:#ECF2EE">Stripe</strong>, a PCI-compliant payment processor. Bemonk never sees, stores, or touches your card number, CVV, or billing address. All payment data is governed by <a href="https://stripe.com/privacy" target="_blank">Stripe's Privacy Policy</a>.</p>
+  <p>We store only whether your payment was successful and when — not the card details themselves.</p>
+
+  <h2>5. How we use your data</h2>
+  <p>Your data is used solely to run the app:</p>
+  <ul>
+    <li>To display your focus history, stats, streaks, and charts</li>
+    <li>To sync your data across browsers and devices when you're logged in</li>
+    <li>To send password reset emails when you request them</li>
+    <li>To verify your Pro access when you log in</li>
+  </ul>
+  <p>We do not sell your data. We do not use it for advertising. We do not share it with third parties except Supabase (storage) and Stripe (payments).</p>
+
+  <h2>6. Emails we send</h2>
+  <p>We send only two types of emails:</p>
+  <ul>
+    <li><strong style="color:#ECF2EE">Account confirmation</strong> — sent once when you sign up.</li>
+    <li><strong style="color:#ECF2EE">Password reset</strong> — sent only when you request it.</li>
+  </ul>
+  <p>Support emails are handled via <strong style="color:#ECF2EE">ImprovMX</strong>, a mail forwarding service, which routes messages sent to support@bemonk.app to our inbox. We do not send marketing emails or newsletters.</p>
+
+  <h2>7. Cookies and tracking</h2>
+  <p>Bemonk does not use advertising cookies or third-party trackers. Supabase stores a session token in your browser to keep you logged in. This is a functional cookie required for the app to work — it does not track you across other websites.</p>
+
+  <h2>8. Data retention</h2>
+  <p>Your data is stored as long as your account exists. If you delete your account, all associated data — your email, session history, settings, and Pro status — is permanently deleted.</p>
+
+  <h2>9. Your rights</h2>
+  <p>You have the right to:</p>
+  <ul>
+    <li>Access the data we hold about you</li>
+    <li>Request correction of inaccurate data</li>
+    <li>Request deletion of your account and all associated data</li>
+    <li>Export your data (contact us and we'll provide it)</li>
+  </ul>
+  <p>To exercise any of these rights, email <a href="mailto:support@bemonk.app">support@bemonk.app</a>. We'll respond within 7 days.</p>
+
+  <h2>10. Children</h2>
+  <p>Bemonk is not directed at children under 13. We do not knowingly collect data from anyone under 13. If you believe a child has created an account, contact us and we'll delete it promptly.</p>
+
+  <h2>11. Changes to this policy</h2>
+  <p>If we make material changes, we'll update the date at the top of this page. Continued use of Bemonk after a change constitutes acceptance of the updated policy.</p>
+
+  <div class="card">
+    <p>Questions? Email us at <a href="mailto:support@bemonk.app">support@bemonk.app</a> — we'll get back to you.</p>
+  </div>
+</main>
+<footer>© 2026 Bemonk · <a href="/">Back to app</a> · <a href="/terms.html">Terms of Service</a></footer>
+</body>
+</html>
