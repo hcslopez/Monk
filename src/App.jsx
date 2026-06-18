@@ -279,7 +279,6 @@ function LandingPage({ onGetStarted }) {
 
       {/* Hero */}
       <section style={LS.hero}>
-        <div style={LS.heroEyebrow}>What gets measured, gets improved.</div>
         <h1 style={LS.heroH1}>
           What can't be measured<br />can't be improved.
         </h1>
