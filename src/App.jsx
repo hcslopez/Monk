@@ -220,44 +220,18 @@ function LandingPage({ onGetStarted }) {
           What can't be measured<br />can't be improved.
         </h1>
         <p style={LS.heroSub}>
-          Bemonk tracks every focus session — called a flow — so you can see your output, build streaks, and push past yesterday. Not because you have to. Because the number on the screen makes you want to.
+          Track every focus session. See your output. Build the streak. The number on the screen becomes the target — and that changes how you study.
         </p>
         <div style={LS.heroCtas}>
           <button className="flow-press flow-focus" style={LS.primaryBtn} onClick={onGetStarted}>Start for free</button>
           <span style={{ color: C.textLo, fontSize: 13.5 }}>$7 once for lifetime Pro · no subscription</span>
         </div>
         <div style={LS.heroPreview}>
-          <div style={LS.previewBar}>
-            <span style={{ ...LS.previewDot, background: "#FF5F57" }} />
-            <span style={{ ...LS.previewDot, background: "#FEBC2E" }} />
-            <span style={{ ...LS.previewDot, background: "#28C840" }} />
-            <span style={{ color: C.textLo, fontSize: 12, marginLeft: 8 }}>bemonk.app</span>
-          </div>
-          <div style={LS.previewBody}>
-            {/* Mini chart mockup */}
-            <div style={{ display: "flex", alignItems: "flex-end", gap: 6, height: 80, padding: "0 8px" }}>
-              {[2, 4, 3, 6, 5, 8, 7].map((h, i) => (
-                <div key={i} style={{ flex: 1, height: `${h * 10}px`, background: i === 5 ? C.accent : C.elevated, borderRadius: "4px 4px 0 0", opacity: i === 5 ? 1 : 0.5 }} />
-              ))}
-            </div>
-            <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 8px 0", fontSize: 10, color: C.textLo }}>
-              {["M","T","W","T","F","S","S"].map((d, i) => <span key={i}>{d}</span>)}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Origin story */}
-      <section style={LS.section}>
-        <div style={LS.sectionInner}>
-          <div style={LS.eyebrow}>Why it exists</div>
-          <h2 style={LS.h2}>I refused to pay $49 for a timer.</h2>
-          <p style={LS.body}>
-            I was a nursing student looking for a focus app that actually showed me my data — how many sessions I'd done, how much time I'd put in, whether I was getting better. The best one I found cost $49 a year and locked the charts behind a paywall. That felt wrong. So I built my own.
-          </p>
-          <p style={LS.body}>
-            Bemonk is that app, now available to anyone who'd rather spend $7 once than $49 every year. Everything I wanted — the timer, the weekly and monthly charts, the streak, the day-by-day breakdown — is in here. No subscription. No renewal. Yours.
-          </p>
+          <img
+            src="/app-preview.png"
+            alt="Bemonk interface"
+            style={{ width: "100%", borderRadius: 12, display: "block" }}
+          />
         </div>
       </section>
 
@@ -307,30 +281,6 @@ function LandingPage({ onGetStarted }) {
                 </div>
               ))}
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features */}
-      <section style={{ ...LS.section, background: C.surface, borderTop: `1px solid ${C.line}`, borderBottom: `1px solid ${C.line}` }}>
-        <div style={LS.sectionInner}>
-          <div style={LS.eyebrow}>What you get</div>
-          <h2 style={LS.h2}>Built to last. Not to upsell.</h2>
-          <div style={LS.featGrid}>
-            {[
-              { title: "Flow timer", desc: "25-minute focus sessions with short and long breaks. Fully configurable." },
-              { title: "Daily chart", desc: "See which hours of the day you're sharpest. Hour-by-hour breakdown." },
-              { title: "Weekly & monthly", desc: "Spot patterns across weeks and months. Know your best stretches." },
-              { title: "Day streak", desc: "Consecutive days with at least one flow. The number you'll want to protect." },
-              { title: "Syncs everywhere", desc: "Log in from any browser or device. Your data follows your account." },
-              { title: "One payment", desc: "$7 once. No subscription. No renewal reminder. No tricks." },
-            ].map((f, i) => (
-              <div key={i} style={LS.featCard}>
-                <div style={{ width: 6, height: 6, borderRadius: "50%", background: C.accent, marginBottom: 14 }} />
-                <div style={{ fontWeight: 650, color: C.textHi, fontSize: 15, marginBottom: 8 }}>{f.title}</div>
-                <div style={{ color: C.textMid, fontSize: 13.5, lineHeight: 1.6 }}>{f.desc}</div>
-              </div>
-            ))}
           </div>
         </div>
       </section>
@@ -1075,7 +1025,7 @@ function SettingsModal({ settings, setSettings, setHistory, onClose }) {
         <input className="flow-input flow-focus" value={settings.name} maxLength={20} onChange={(e) => set({ name: e.target.value })} placeholder="Shown on the leaderboard" style={S.input} />
         <div style={S.modalSection}>Durations</div>
         <div style={S.sectionBody}>
-          <Stepper label="Focus" suffix="min" value={settings.focusMin} min={1} max={90} step={5} onChange={(v) => set({ focusMin: v })} />
+          <Stepper label="Focus" suffix="min" value={settings.focusMin} min={1} max={90} onChange={(v) => set({ focusMin: v })} />
           <Stepper label="Short break" suffix="min" value={settings.shortMin} min={1} max={30} onChange={(v) => set({ shortMin: v })} />
           <Stepper label="Long break" suffix="min" value={settings.longMin} min={5} max={60} step={5} onChange={(v) => set({ longMin: v })} />
           <Stepper label="Long break every" suffix="flows" value={settings.longEvery} min={2} max={8} onChange={(v) => set({ longEvery: v })} last />
@@ -1100,13 +1050,25 @@ function SettingsModal({ settings, setSettings, setHistory, onClose }) {
   );
 }
 function Stepper({ label, value, onChange, min, max, step = 1, suffix, last }) {
+  const smartStep = (current, direction) => {
+    if (suffix === "min") {
+      if (direction === 1) {
+        if (current < 5) return Math.min(current + 1, 5);
+        return Math.min(current + 5, max);
+      } else {
+        if (current <= 5) return Math.max(current - 1, min);
+        return Math.max(current - 5, 5);
+      }
+    }
+    return direction === 1 ? Math.min(current + step, max) : Math.max(current - step, min);
+  };
   return (
     <div style={{ ...S.rowItem, borderBottom: last ? "none" : `1px solid ${C.line}` }}>
       <span style={{ color: C.textHi, fontSize: 14 }}>{label}</span>
       <div style={S.stepper}>
-        <button className="flow-press flow-focus" style={S.stepBtn} onClick={() => onChange(Math.max(min, value - step))} aria-label={`Decrease ${label}`}><Minus size={14} color={C.textHi} /></button>
+        <button className="flow-press flow-focus" style={S.stepBtn} onClick={() => onChange(smartStep(value, -1))} aria-label={`Decrease ${label}`}><Minus size={14} color={C.textHi} /></button>
         <span style={S.stepVal}>{value}<span style={{ color: C.textLo, fontSize: 11, marginLeft: 3, fontWeight: 500 }}>{suffix}</span></span>
-        <button className="flow-press flow-focus" style={S.stepBtn} onClick={() => onChange(Math.min(max, value + step))} aria-label={`Increase ${label}`}><Plus size={14} color={C.textHi} /></button>
+        <button className="flow-press flow-focus" style={S.stepBtn} onClick={() => onChange(smartStep(value, 1))} aria-label={`Increase ${label}`}><Plus size={14} color={C.textHi} /></button>
       </div>
     </div>
   );
